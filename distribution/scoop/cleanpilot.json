@@ -7,7 +7,7 @@
   "architecture": {
     "64bit": {
       "url": "https://github.com/cleanpilot/cleanpilot/releases/download/v1.0.0/CleanPilot-1.0.0-windows-x64-portable.zip",
-      "hash": "124E53C00A310138125E8788B14FD0FE23CD5E0FFE79AA99406FBF1BD872F657",
+      "hash": "77813B7625C837A73364F945CD72FD1BAF47F87C80926942A94FAE234DC0C9B8",
       "extract_dir": "CleanPilot"
     }
   },

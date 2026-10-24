@@ -392,6 +392,9 @@ public class RogueProcessThreatService {
         );
     }
 
+    private static final long CURRENT_PID = ProcessHandle.current().pid();
+    private static final long PARENT_PID = ProcessHandle.current().parent().map(ProcessHandle::pid).orElse(-1L);
+
     /**
      * Determines whether a process is an essential operating system component
      * whose termination or suspension would destabilize or crash Windows.
@@ -403,12 +406,7 @@ public class RogueProcessThreatService {
         }
 
         // CleanPilot's own process and parent process
-        long currentPid = ProcessHandle.current().pid();
-        if (pid == currentPid) {
-            return true;
-        }
-        Optional<ProcessHandle> parentOpt = ProcessHandle.current().parent();
-        if (parentOpt.isPresent() && parentOpt.get().pid() == pid) {
+        if (pid == CURRENT_PID || pid == PARENT_PID) {
             return true;
         }
 

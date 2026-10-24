@@ -1,8 +1,15 @@
 package com.cleanpilot.ui;
 
 import com.cleanpilot.event.StageReadyEvent;
+import com.cleanpilot.service.LocalizationService;
+import com.cleanpilot.service.SystemTrayManagerService;
+import com.cleanpilot.service.UserPreferencesService;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,19 +23,22 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
 
     private final SpringFXMLLoader fxmlLoader;
     private final ThemeManager themeManager;
-    private final com.cleanpilot.service.SystemTrayManagerService trayManagerService;
-    private final com.cleanpilot.service.LocalizationService localizationService;
+    private final SystemTrayManagerService trayManagerService;
+    private final LocalizationService localizationService;
+    private final UserPreferencesService preferencesService;
 
     public StageInitializer(
             SpringFXMLLoader fxmlLoader,
             ThemeManager themeManager,
-            com.cleanpilot.service.SystemTrayManagerService trayManagerService,
-            com.cleanpilot.service.LocalizationService localizationService
+            SystemTrayManagerService trayManagerService,
+            LocalizationService localizationService,
+            UserPreferencesService preferencesService
     ) {
         this.fxmlLoader = fxmlLoader;
         this.themeManager = themeManager;
         this.trayManagerService = trayManagerService;
         this.localizationService = localizationService;
+        this.preferencesService = preferencesService;
     }
 
     @Override
@@ -40,7 +50,52 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
             Parent root = fxmlLoader.load("/fxml/MainView.fxml");
             root.setNodeOrientation(localizationService.getNodeOrientation());
 
-            Scene scene = new Scene(root, 1180, 780);
+            // 1. Query visual screen bounds (respects Windows taskbar & HiDPI scaling)
+            Rectangle2D primaryVisualBounds = Screen.getPrimary().getVisualBounds();
+            double screenW = primaryVisualBounds.getWidth();
+            double screenH = primaryVisualBounds.getHeight();
+
+            // 2. Compute safe dimensions that are guaranteed to fit within the visible display
+            double safeMaxW = screenW * 0.95;
+            double safeMaxH = screenH * 0.92;
+
+            double defaultW = Math.min(1140.0, safeMaxW);
+            double defaultH = Math.min(650.0, safeMaxH);
+
+            double minW = Math.min(840.0, screenW * 0.70);
+            double minH = Math.min(520.0, screenH * 0.75);
+
+            stage.setMinWidth(minW);
+            stage.setMinHeight(minH);
+
+            // 3. Load saved user preferences or fallback to centered bounds
+            boolean startMaximized = preferencesService.isWindowMaximized();
+            double targetW = preferencesService.getWindowWidth(defaultW);
+            double targetH = preferencesService.getWindowHeight(defaultH);
+
+            // Ensure window width/height never exceeds available screen visual bounds
+            targetW = Math.max(minW, Math.min(targetW, safeMaxW));
+            targetH = Math.max(minH, Math.min(targetH, safeMaxH));
+
+            double defaultX = primaryVisualBounds.getMinX() + Math.max(0.0, (screenW - targetW) / 2.0);
+            double defaultY = primaryVisualBounds.getMinY() + Math.max(0.0, (screenH - targetH) / 2.0);
+
+            double targetX = preferencesService.getWindowX(defaultX);
+            double targetY = preferencesService.getWindowY(defaultY);
+
+            // CRITICAL ANTI-OFFSCREEN CLAMP:
+            // targetY can NEVER be lower than visualBounds.getMinY() (which would hide the top title/menu bar)
+            if (targetY < primaryVisualBounds.getMinY()) {
+                targetY = primaryVisualBounds.getMinY();
+            }
+            if (targetY + 80.0 > primaryVisualBounds.getMaxY()) {
+                targetY = primaryVisualBounds.getMinY() + 20.0;
+            }
+            if (targetX < primaryVisualBounds.getMinX() || targetX > primaryVisualBounds.getMaxX() - 100.0) {
+                targetX = defaultX;
+            }
+
+            Scene scene = new Scene(root, targetW, targetH);
             String customCss = getClass().getResource("/css/app.css") != null
                     ? getClass().getResource("/css/app.css").toExternalForm()
                     : null;
@@ -49,8 +104,6 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
             }
 
             stage.setTitle("CleanPilot - Honest & Privacy-First System Optimizer");
-            stage.setMinWidth(960);
-            stage.setMinHeight(640);
             stage.getIcons().addAll(
                     createAppIcon(16),
                     createAppIcon(32),
@@ -59,13 +112,75 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
                     createAppIcon(128)
             );
             stage.setScene(scene);
+
+            // Apply safe coordinates and dimensions before showing
+            stage.setWidth(targetW);
+            stage.setHeight(targetH);
+            stage.setX(targetX);
+            stage.setY(targetY);
+
+            // 4. Continuous clamp listener: prevents Windows or restore events from pushing top bar off-screen
+            stage.yProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null && !stage.isMaximized() && !stage.isIconified()) {
+                    Rectangle2D bounds = getActiveScreenBounds(stage);
+                    if (newVal.doubleValue() < bounds.getMinY()) {
+                        Platform.runLater(() -> stage.setY(bounds.getMinY()));
+                    }
+                }
+            });
+
+            // 5. Window state persistence
+            stage.maximizedProperty().addListener((obs, oldVal, isMax) -> {
+                preferencesService.setWindowMaximized(isMax);
+            });
+
+            stage.showingProperty().addListener((obs, oldVal, showing) -> {
+                if (!showing) {
+                    saveWindowBounds(stage);
+                }
+            });
+
+            stage.setOnCloseRequest(e -> saveWindowBounds(stage));
+
+            if (startMaximized) {
+                stage.setMaximized(true);
+            }
+
             stage.show();
+
+            // Post-show guarantee: ensure top bar is fully visible within screen bounds
+            if (!stage.isMaximized() && stage.getY() < primaryVisualBounds.getMinY()) {
+                stage.setY(primaryVisualBounds.getMinY());
+            }
 
             trayManagerService.setupTray(stage);
 
-            log.info("CleanPilot Desktop UI started successfully.");
+            log.info("CleanPilot Desktop UI started successfully. Screen: {}x{}, Window: {}x{} at ({},{})",
+                    (int) screenW, (int) screenH, (int) targetW, (int) targetH, (int) stage.getX(), (int) stage.getY());
         } catch (Exception e) {
             log.error("Failed to initialize JavaFX Primary Stage: {}", e.getMessage(), e);
+        }
+    }
+
+    private Rectangle2D getActiveScreenBounds(Stage stage) {
+        try {
+            ObservableList<Screen> screens = Screen.getScreensForRectangle(
+                    stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight()
+            );
+            if (!screens.isEmpty()) {
+                return screens.get(0).getVisualBounds();
+            }
+        } catch (Exception ignored) {
+        }
+        return Screen.getPrimary().getVisualBounds();
+    }
+
+    private void saveWindowBounds(Stage stage) {
+        if (!stage.isMaximized() && !stage.isIconified() && stage.getWidth() > 300 && stage.getHeight() > 300) {
+            preferencesService.setWindowWidth(stage.getWidth());
+            preferencesService.setWindowHeight(stage.getHeight());
+            preferencesService.setWindowX(stage.getX());
+            preferencesService.setWindowY(stage.getY());
         }
     }
 

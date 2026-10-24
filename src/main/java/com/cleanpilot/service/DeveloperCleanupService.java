@@ -82,20 +82,23 @@ public class DeveloperCleanupService {
     public List<DeveloperArtifactInfo> scanDeveloperArtifacts(List<Path> searchRoots, AtomicBoolean cancelFlag, BiConsumer<String, Double> progress) {
         List<DeveloperArtifactInfo> results = new ArrayList<>();
 
-        if (searchRoots == null || searchRoots.isEmpty()) {
+        boolean isDefaultScan = (searchRoots == null || searchRoots.isEmpty());
+        if (isDefaultScan) {
             searchRoots = getDefaultSearchRoots();
         }
 
-        double totalSteps = searchRoots.size() + 3.0; // roots + npm cache + pip cache + WSL
+        double totalSteps = searchRoots.size() + (isDefaultScan ? 3.0 : 0.0);
         double currentStep = 0.0;
 
-        // 1. Scan global package manager caches
-        if (progress != null) progress.accept("Scanning package manager caches (npm, yarn, pip)...", ++currentStep / totalSteps);
-        scanGlobalCaches(results);
+        if (isDefaultScan) {
+            // 1. Scan global package manager caches
+            if (progress != null) progress.accept("Scanning package manager caches (npm, yarn, pip)...", ++currentStep / totalSteps);
+            scanGlobalCaches(results);
 
-        // 2. Scan WSL2 Virtual Hard Disks
-        if (progress != null) progress.accept("Scanning WSL2 Virtual Disks...", ++currentStep / totalSteps);
-        scanWslDisks(results);
+            // 2. Scan WSL2 Virtual Hard Disks
+            if (progress != null) progress.accept("Scanning WSL2 Virtual Disks...", ++currentStep / totalSteps);
+            scanWslDisks(results);
+        }
 
         // 3. Scan workspace directories
         for (Path root : searchRoots) {

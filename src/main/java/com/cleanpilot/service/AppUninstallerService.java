@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -102,7 +103,12 @@ public class AppUninstallerService {
                 // Flush final subkey
                 processSubKey(currentSubKey, currentValues, rootKey.contains("WOW6432Node"), appMap);
             }
-            process.waitFor();
+            boolean finished = process.waitFor(20, TimeUnit.SECONDS);
+            if (!finished) {
+                process.descendants().forEach(ProcessHandle::destroyForcibly);
+                process.destroyForcibly();
+                log.warn("reg query {} exceeded 20s timeout and was terminated.", rootKey);
+            }
         } catch (Exception ex) {
             log.debug("Failed querying uninstall registry key {}: {}", rootKey, ex.getMessage());
         }

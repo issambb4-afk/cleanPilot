@@ -129,4 +129,50 @@ public class UserPreferencesService {
     public void setMaintenanceNotifications(boolean val) {
         prefs.putBoolean(PREF_MAINTENANCE_NOTIFICATIONS, val);
     }
+
+    private static final String PREF_WINDOW_MAXIMIZED = "cleanpilot.window_maximized";
+    private static final String PREF_WINDOW_WIDTH = "cleanpilot.window_width";
+    private static final String PREF_WINDOW_HEIGHT = "cleanpilot.window_height";
+    private static final String PREF_WINDOW_X = "cleanpilot.window_x";
+    private static final String PREF_WINDOW_Y = "cleanpilot.window_y";
+
+    public boolean isWindowMaximized() {
+        return prefs.getBoolean(PREF_WINDOW_MAXIMIZED, false);
+    }
+
+    public void setWindowMaximized(boolean maximized) {
+        prefs.putBoolean(PREF_WINDOW_MAXIMIZED, maximized);
+    }
+
+    public double getWindowWidth(double defaultVal) {
+        return prefs.getDouble(PREF_WINDOW_WIDTH, defaultVal);
+    }
+
+    public void setWindowWidth(double width) {
+        prefs.putDouble(PREF_WINDOW_WIDTH, width);
+    }
+
+    public double getWindowHeight(double defaultVal) {
+        return prefs.getDouble(PREF_WINDOW_HEIGHT, defaultVal);
+    }
+
+    public void setWindowHeight(double height) {
+        prefs.putDouble(PREF_WINDOW_HEIGHT, height);
+    }
+
+    public double getWindowX(double defaultVal) {
+        return prefs.getDouble(PREF_WINDOW_X, defaultVal);
+    }
+
+    public void setWindowX(double x) {
+        prefs.putDouble(PREF_WINDOW_X, x);
+    }
+
+    public double getWindowY(double defaultVal) {
+        return prefs.getDouble(PREF_WINDOW_Y, defaultVal);
+    }
+
+    public void setWindowY(double y) {
+        prefs.putDouble(PREF_WINDOW_Y, y);
+    }
 }

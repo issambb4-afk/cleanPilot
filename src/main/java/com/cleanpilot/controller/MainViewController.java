@@ -226,7 +226,11 @@ public class MainViewController implements Initializable {
     public void onMaximizeWindow() {
         Stage stage = getStage();
         if (stage != null) {
-            stage.setMaximized(!stage.isMaximized());
+            boolean next = !stage.isMaximized();
+            stage.setMaximized(next);
+            if (!next && stage.getY() < 0) {
+                stage.setY(0);
+            }
         }
     }
 

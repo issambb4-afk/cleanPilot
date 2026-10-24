@@ -84,8 +84,8 @@ public class NetworkOptimizationService {
             log.warn("Clear-DnsClientCache failed: {}", e.getMessage());
         }
 
-        // If not flushed, try elevated flushdns
-        if (!dnsFlushed) {
+        // If not flushed and already admin, try elevated flushdns
+        if (!dnsFlushed && WindowsSecurityUtils.isRunningAsAdmin()) {
             dnsFlushed = WindowsSecurityUtils.runElevated("ipconfig /flushdns");
         }
 
