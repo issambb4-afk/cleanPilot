@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: CleanPilot
+  main:
+    headless: false
+  datasource:
+    url: jdbc:sqlite:${user.home}/.cleanpilot/cleanpilot.db
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+cleanpilot:
+  app:
+    name: "CleanPilot"
+    version: "1.0.0"
+  defaults:
+    min-large-file-size-mb: 100
+    theme: "DARK"
+    safe-trash: true
+
+logging:
+  level:
+    oshi.util.platform.windows.WmiQueryHandler: ERROR
+    oshi.hardware.platform.windows.WindowsSensors: ERROR

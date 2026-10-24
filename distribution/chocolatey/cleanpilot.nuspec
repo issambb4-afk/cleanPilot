@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>cleanpilot</id>
+    <version>1.0.0</version>
+    <packageSourceUrl>https://github.com/cleanpilot/cleanpilot</packageSourceUrl>
+    <owners>CleanPilot Team</owners>
+    <title>CleanPilot - Honest &amp; Privacy-First Disk Analyzer</title>
+    <authors>CleanPilot Team</authors>
+    <projectUrl>https://github.com/cleanpilot/cleanpilot</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/cleanpilot/cleanpilot/main/docs/assets/logo/cleanpilot-256x256.png</iconUrl>
+    <copyright>Copyright (c) 2026 CleanPilot Team</copyright>
+    <licenseUrl>https://github.com/cleanpilot/cleanpilot/blob/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/cleanpilot/cleanpilot</projectSourceUrl>
+    <docsUrl>https://github.com/cleanpilot/cleanpilot#readme</docsUrl>
+    <bugTrackerUrl>https://github.com/cleanpilot/cleanpilot/issues</bugTrackerUrl>
+    <tags>cleanpilot disk-cleaner disk-space duplicate-finder privacy zero-telemetry diagnostics java</tags>
+    <summary>Honest, Privacy-First Desktop Disk Analyzer and Storage Management Hub</summary>
+    <description>
+CleanPilot is an open, honest, zero-telemetry Windows storage analyzer, duplicate hunter, and system health hub.
+Built with Java 21 Virtual Threads, Spring Boot 3, JavaFX 21, and OSHI.
+
+### Features
+- Memory-bounded streaming duplicate detection (NIO.2 Direct ByteBuffer SHA-256)
+- Developer cache hunter (node_modules, .gradle/caches, target, .venv)
+- Rogue process &amp; crypto-miner threat hunter
+- Laptop battery degradation, thermal throttling, and SMART drive health
+- Safe native recycle bin restoration support
+- 100% offline, zero network telemetry, zero cloud dependencies
+    </description>
+    <releaseNotes>https://github.com/cleanpilot/cleanpilot/releases/tag/v1.0.0</releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cleanpilot.controller.DashboardViewController"
+            fitToWidth="true" styleClass="dashboard-scroll">
+    <content>
+        <VBox spacing="18.0">
+            <padding>
+                <Insets top="8.0" right="20.0" bottom="28.0" left="8.0"/>
+            </padding>
+
+            <!-- Top Banner & Mode Switches -->
+            <HBox alignment="CENTER_LEFT" spacing="14.0">
+                <VBox spacing="2.0">
+                    <Label text="%dashboard.title" styleClass="title-2"/>
+                    <Label fx:id="osLabel" text="%dashboard.subtitle" styleClass="text-subtle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox spacing="8.0" alignment="CENTER">
+                    <Button fx:id="viewSimpleBtn" text="%dashboard.view.simple" onAction="#onSwitchToSimpleView"
+                            styleClass="view-mode-pill, active"/>
+                    <Button fx:id="viewTechnicalBtn" text="%dashboard.view.technical" onAction="#onSwitchToTechnicalView"
+                            styleClass="view-mode-pill"/>
+                </HBox>
+                <Button text="%dashboard.refresh" onAction="#refreshTelemetry" styleClass="button-outlined">
+                    <tooltip><Tooltip text="%dashboard.refresh.tooltip"/></tooltip>
+                </Button>
+            </HBox>
+
+            <!-- 1. STEP TRACKER BAR -->
+            <HBox alignment="CENTER" spacing="10.0" styleClass="step-tracker-bar">
+                <!-- Step 1: Privacy -->
+                <HBox alignment="CENTER" spacing="6.0" styleClass="step-tracker-node">
+                    <StackPane fx:id="stepCircle1" styleClass="step-tracker-circle">
+                        <Label fx:id="stepLabel1" text="1" styleClass="step-tracker-circle-text"/>
+                    </StackPane>
+                    <Label fx:id="stepText1" text="%dashboard.step1" styleClass="step-tracker-label"/>
+                </HBox>
+                <Region fx:id="stepLine1" styleClass="step-tracker-line" HBox.hgrow="ALWAYS"/>
+
+                <!-- Step 2: Disk Space -->
+                <HBox alignment="CENTER" spacing="6.0" styleClass="step-tracker-node">
+                    <StackPane fx:id="stepCircle2" styleClass="step-tracker-circle">
+                        <Label fx:id="stepLabel2" text="2" styleClass="step-tracker-circle-text"/>
+                    </StackPane>
+                    <Label fx:id="stepText2" text="%dashboard.step2" styleClass="step-tracker-label"/>
+                </HBox>
+                <Region fx:id="stepLine2" styleClass="step-tracker-line" HBox.hgrow="ALWAYS"/>
+
+                <!-- Step 3: Speed & RAM -->
+                <HBox alignment="CENTER" spacing="6.0" styleClass="step-tracker-node">
+                    <StackPane fx:id="stepCircle3" styleClass="step-tracker-circle">
+                        <Label fx:id="stepLabel3" text="3" styleClass="step-tracker-circle-text"/>
+                    </StackPane>
+                    <Label fx:id="stepText3" text="%dashboard.step3" styleClass="step-tracker-label"/>
+                </HBox>
+                <Region fx:id="stepLine3" styleClass="step-tracker-line" HBox.hgrow="ALWAYS"/>
+
+                <!-- Step 4: Security -->
+                <HBox alignment="CENTER" spacing="6.0" styleClass="step-tracker-node">
+                    <StackPane fx:id="stepCircle4" styleClass="step-tracker-circle">
+                        <Label fx:id="stepLabel4" text="4" styleClass="step-tracker-circle-text"/>
+                    </StackPane>
+                    <Label fx:id="stepText4" text="%dashboard.step4" styleClass="step-tracker-label"/>
+                </HBox>
+                <Region fx:id="stepLine4" styleClass="step-tracker-line" HBox.hgrow="ALWAYS"/>
+
+                <!-- Step 5: Action -->
+                <HBox alignment="CENTER" spacing="6.0" styleClass="step-tracker-node">
+                    <StackPane fx:id="stepCircle5" styleClass="step-tracker-circle">
+                        <Label fx:id="stepLabel5" text="5" styleClass="step-tracker-circle-text"/>
+                    </StackPane>
+                    <Label fx:id="stepText5" text="%dashboard.step5" styleClass="step-tracker-label"/>
+                </HBox>
+            </HBox>
+
+            <!-- 2. HERO CENTERPIECE -->
+            <VBox fx:id="heroCenterpiece" spacing="14.0" styleClass="hero-centerpiece">
+                <Canvas fx:id="gaugeCanvas" width="130" height="130"/>
+
+                <VBox alignment="CENTER" spacing="4.0">
+                    <Label fx:id="heroTitleLabel" text="%dashboard.hero.title"
+                           styleClass="hero-status-title" wrapText="true"/>
+                    <Label fx:id="heroSubtitleLabel"
+                           text="%dashboard.hero.subtitle"
+                           styleClass="hero-status-sub" wrapText="true"/>
+                </VBox>
+
+                <!-- Live Task & Progress Bar -->
+                <VBox fx:id="progressBox" alignment="CENTER" spacing="6.0" visible="false" managed="false" maxWidth="500.0">
+                    <ProgressBar fx:id="smartCleanProgressBar" maxWidth="Infinity" progress="0.0"/>
+                    <Label fx:id="smartCleanStatusLabel" text="" styleClass="text-small, text-accent"/>
+                </VBox>
+
+                <!-- Action Pill Buttons Box -->
+                <HBox alignment="CENTER" spacing="14.0">
+                    <Button fx:id="heroActionBtn" text="%dashboard.btn.analyze" onAction="#onHeroActionClick"
+                            styleClass="btn-pill, btn-pill-primary"/>
+                    <Button fx:id="toggleDetailsBtn" text="%dashboard.btn.view_details" onAction="#onToggleDetailsView"
+                            styleClass="btn-pill, btn-pill-outlined" visible="false" managed="false"/>
+                </HBox>
+            </VBox>
+
+            <!-- 3. 4 CATEGORY HEALTH CARDS -->
+            <GridPane hgap="14.0" vgap="14.0">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <!-- Card 1: Privacy -->
+                <VBox spacing="8.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="health-card" onMouseClicked="#onInspectPrivacy">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <StackPane styleClass="health-card-icon-badge" style="-fx-background-color: rgba(2, 132, 199, 0.15);">
+                            <Label text="🔒" style="-fx-font-size: 1.2em;"/>
+                        </StackPane>
+                        <VBox spacing="1.0" HBox.hgrow="ALWAYS">
+                            <Label text="%dashboard.card.privacy.title" styleClass="health-card-title"/>
+                            <Label text="%dashboard.card.privacy.sub" styleClass="health-card-sub"/>
+                        </VBox>
+                        <Label fx:id="cardBadge1" text="Ready" styleClass="badge, badge-subtle"/>
+                    </HBox>
+                    <Label fx:id="cardValue1" text="0 B" styleClass="health-card-value"/>
+                    <Label text="%dashboard.card.privacy.detail" wrapText="true" styleClass="text-caption, text-subtle"/>
+                </VBox>
+
+                <!-- Card 2: Disk Space -->
+                <VBox spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="health-card" onMouseClicked="#onInspectSpace">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <StackPane styleClass="health-card-icon-badge" style="-fx-background-color: rgba(16, 185, 129, 0.15);">
+                            <Label text="💾" style="-fx-font-size: 1.2em;"/>
+                        </StackPane>
+                        <VBox spacing="1.0" HBox.hgrow="ALWAYS">
+                            <Label text="%dashboard.card.space.title" styleClass="health-card-title"/>
+                            <Label text="%dashboard.card.space.sub" styleClass="health-card-sub"/>
+                        </VBox>
+                        <Label fx:id="cardBadge2" text="Ready" styleClass="badge, badge-subtle"/>
+                    </HBox>
+                    <Label fx:id="cardValue2" text="0 B" styleClass="health-card-value"/>
+                    <Label text="%dashboard.card.space.detail" wrapText="true" styleClass="text-caption, text-subtle"/>
+                </VBox>
+
+                <!-- Card 3: Speed & RAM -->
+                <VBox spacing="8.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="health-card" onMouseClicked="#onInspectSpeed">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <StackPane styleClass="health-card-icon-badge" style="-fx-background-color: rgba(245, 158, 11, 0.15);">
+                            <Label text="⚡" style="-fx-font-size: 1.2em;"/>
+                        </StackPane>
+                        <VBox spacing="1.0" HBox.hgrow="ALWAYS">
+                            <Label text="%dashboard.card.speed.title" styleClass="health-card-title"/>
+                            <Label text="%dashboard.card.speed.sub" styleClass="health-card-sub"/>
+                        </VBox>
+                        <Label fx:id="cardBadge3" text="Ready" styleClass="badge, badge-subtle"/>
+                    </HBox>
+                    <Label fx:id="cardValue3" text="0 B" styleClass="health-card-value"/>
+                    <Label text="%dashboard.card.speed.detail" wrapText="true" styleClass="text-caption, text-subtle"/>
+                </VBox>
+
+                <!-- Card 4: Security -->
+                <VBox spacing="8.0" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="health-card" onMouseClicked="#onInspectSecurity">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <StackPane styleClass="health-card-icon-badge" style="-fx-background-color: rgba(139, 92, 246, 0.15);">
+                            <Label text="🛡" style="-fx-font-size: 1.2em;"/>
+                        </StackPane>
+                        <VBox spacing="1.0" HBox.hgrow="ALWAYS">
+                            <Label text="%dashboard.card.security.title" styleClass="health-card-title"/>
+                            <Label text="%dashboard.card.security.sub" styleClass="health-card-sub"/>
+                        </VBox>
+                        <Label fx:id="cardBadge4" text="Healthy" styleClass="badge, badge-success"/>
+                    </HBox>
+                    <Label fx:id="cardValue4" text="0 Threats" styleClass="health-card-value"/>
+                    <Label text="%dashboard.card.security.detail" wrapText="true" styleClass="text-caption, text-subtle"/>
+                </VBox>
+            </GridPane>
+
+            <!-- 4. DETAILED FINDINGS DRAWER (EXPANDABLE INSPECTION) -->
+            <VBox fx:id="detailsDrawer" spacing="10.0" styleClass="card" visible="false" managed="false">
+                <padding><Insets top="14.0" right="16.0" bottom="14.0" left="16.0"/></padding>
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label text="📋 Targeted Items Details" styleClass="title-4"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="✕ Close" onAction="#onCloseDetailsDrawer" styleClass="button-outlined, button-small"/>
+                </HBox>
+                <TableView fx:id="detailsTable" prefHeight="220.0">
+                    <columns>
+                        <TableColumn fx:id="colCategory" text="Category" minWidth="110.0" prefWidth="130.0"/>
+                        <TableColumn fx:id="colDescription" text="Description" minWidth="180.0" prefWidth="220.0"/>
+                        <TableColumn fx:id="colItemCount" text="Files" minWidth="65.0" prefWidth="80.0"/>
+                        <TableColumn fx:id="colSize" text="Size" minWidth="85.0" prefWidth="100.0"/>
+                        <TableColumn fx:id="colPath" text="Path / Details" minWidth="220.0" prefWidth="380.0"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                </TableView>
+            </VBox>
+
+            <!-- 5. TECHNICAL TELEMETRY & HARDWARE SECTION -->
+            <VBox fx:id="technicalSection" spacing="16.0">
+                <!-- Stats KPI Cards Grid -->
+                <GridPane hgap="14.0" vgap="14.0">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                        <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                        <ColumnConstraints percentWidth="33.34" hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <!-- KPI 1 -->
+                    <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card">
+                        <Label text="%dashboard.kpi.total_cleaned" styleClass="text-caption, text-subtle"/>
+                        <Label fx:id="totalCleanedLabel" text="0 B" styleClass="title-2, text-success"/>
+                        <Label text="Audit history cumulative reclaimed space" wrapText="true" styleClass="text-small, text-subtle"/>
+                    </VBox>
+
+                    <!-- KPI 2 -->
+                    <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card">
+                        <Label text="%dashboard.kpi.total_files" styleClass="text-caption, text-subtle"/>
+                        <Label fx:id="totalItemsDeletedLabel" text="0 items" styleClass="title-2, text-accent"/>
+                        <Label text="Safely removed across maintenance runs" wrapText="true" styleClass="text-small, text-subtle"/>
+                    </VBox>
+
+                    <!-- KPI 3 -->
+                    <VBox spacing="4.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card">
+                        <Label text="%dashboard.kpi.privacy_title" styleClass="text-caption, text-subtle"/>
+                        <Label text="%dashboard.kpi.privacy_val" styleClass="title-2"/>
+                        <Label text="%dashboard.kpi.privacy_sub" wrapText="true" styleClass="text-small, text-subtle"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- Real-time Hardware Telemetry -->
+                <VBox spacing="12.0" styleClass="card">
+                    <padding><Insets top="14.0" right="16.0" bottom="14.0" left="16.0"/></padding>
+                    <Label text="%dashboard.telemetry.title" styleClass="title-4"/>
+                    <GridPane hgap="16.0" vgap="12.0">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="140.0" prefWidth="160.0"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                            <ColumnConstraints minWidth="160.0" prefWidth="200.0" halignment="RIGHT"/>
+                        </columnConstraints>
+
+                        <Label text="%dashboard.telemetry.cpu" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="text-bold"/>
+                        <ProgressBar fx:id="cpuProgressBar" maxWidth="Infinity" progress="0.0"
+                                     GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <Label fx:id="cpuLabel" text="0.0%" GridPane.rowIndex="0" GridPane.columnIndex="2" styleClass="text-bold"/>
+
+                        <Label text="%dashboard.telemetry.ram" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="text-bold"/>
+                        <ProgressBar fx:id="memoryProgressBar" maxWidth="Infinity" progress="0.0"
+                                     GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        <Label fx:id="memoryLabel" text="0 MB / 0 MB" GridPane.rowIndex="1" GridPane.columnIndex="2" styleClass="text-bold"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Mounted Drive Partitions -->
+                <VBox spacing="10.0" styleClass="card">
+                    <padding><Insets top="14.0" right="16.0" bottom="14.0" left="16.0"/></padding>
+                    <Label text="Storage Drives &amp; Partitions" styleClass="title-4"/>
+                    <VBox fx:id="drivesContainer" spacing="10.0"/>
+                </VBox>
+
+                <!-- Top Resource Consuming Processes -->
+                <VBox spacing="10.0" styleClass="card">
+                    <padding><Insets top="14.0" right="16.0" bottom="14.0" left="16.0"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <VBox spacing="2.0">
+                            <Label text="%dashboard.hogs.title" styleClass="title-4"/>
+                            <Label text="%dashboard.hogs.sub" wrapText="true" styleClass="text-small, text-subtle"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Inspect All Processes →" onAction="#onOpenProcessMonitor" styleClass="button-outlined"/>
+                    </HBox>
+                    <VBox fx:id="hogsContainer" spacing="8.0"/>
+                </VBox>
+
+                <!-- Quick Action Launchers -->
+                <GridPane hgap="14.0" vgap="14.0">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS"/>
+                        <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <VBox spacing="8.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, action-card">
+                        <padding><Insets top="14.0" right="16.0" bottom="14.0" left="16.0"/></padding>
+                        <Label text="%dashboard.quick.large" styleClass="title-4"/>
+                        <Label text="%dashboard.quick.large.sub"
+                               wrapText="true" styleClass="text-subtle"/>
+                        <Region VBox.vgrow="ALWAYS" minHeight="8.0"/>
+                        <Button text="%dashboard.quick.large.btn" onAction="#onQuickScanLargeFiles" styleClass="button-outlined"/>
+                    </VBox>
+
+                    <VBox spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, action-card">
+                        <padding><Insets top="14.0" right="16.0" bottom="14.0" left="16.0"/></padding>
+                        <Label text="%dashboard.quick.dups" styleClass="title-4"/>
+                        <Label text="%dashboard.quick.dups.sub"
+                               wrapText="true" styleClass="text-subtle"/>
+                        <Region VBox.vgrow="ALWAYS" minHeight="8.0"/>
+                        <Button text="%dashboard.quick.dups.btn" onAction="#onQuickScanDuplicates" styleClass="button-outlined"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+        </VBox>
+    </content>
+</ScrollPane>

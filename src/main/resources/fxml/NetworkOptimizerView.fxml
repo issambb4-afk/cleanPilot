@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.NetworkOptimizerViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Header Section -->
+    <VBox spacing="10.0">
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <Label text="DNS Cache Optimizer &amp; Socket Leak Hunter" styleClass="title-2"/>
+                    <Label fx:id="adminBadge" text="Standard User" styleClass="badge, badge-info"/>
+                </HBox>
+                <Label text="Inspect active TCP connections, track socket congestion (CLOSE_WAIT / TIME_WAIT), flush DNS resolver cache, and optimize network stack."
+                       styleClass="text-subtle"/>
+            </VBox>
+            <Button fx:id="refreshBtn" text="🔄 Refresh" minWidth="-Infinity" onAction="#onRefresh" styleClass="button-outlined"/>
+            <Button fx:id="optimizeDnsBtn" text="⚡ Flush DNS" minWidth="-Infinity" onAction="#onOptimizeNetwork" styleClass="accent">
+                <tooltip><Tooltip text="Flush local DNS resolver and reset network stack buffers"/></tooltip>
+            </Button>
+        </HBox>
+
+        <!-- KPI Cards Grid -->
+        <GridPane hgap="12.0" vgap="12.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="33.34" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="ACTIVE TCP SOCKETS" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="totalSocketsLabel" text="-" styleClass="title-3, text-bold"/>
+                <Label text="Established &amp; listening connections" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="SUSPECT LEAKS (CLOSE_WAIT)" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="socketLeaksLabel" text="-" styleClass="title-3, text-bold, text-danger"/>
+                <Label text="Unclosed orphaned network handles" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="NETWORK STACK STATUS" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="stackStatusLabel" text="Ready" styleClass="title-3, text-bold, text-success"/>
+                <Label text="DNS resolver &amp; Winsock catalog" styleClass="text-small, text-subtle"/>
+            </VBox>
+        </GridPane>
+
+        <!-- Status Banner -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card" style="-fx-padding: 8 14;">
+            <Label text="ℹ" styleClass="text-accent, text-bold"/>
+            <Label fx:id="statusBannerLabel" text="Monitoring active network endpoints..." HBox.hgrow="ALWAYS" styleClass="text-bold"/>
+        </HBox>
+    </VBox>
+
+    <!-- Search & Filter Controls -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 12;">
+        <TextField fx:id="searchField" promptText="🔍 Filter by process, IP address, port, or socket state..."
+                   HBox.hgrow="ALWAYS" minWidth="240.0"/>
+        <ComboBox fx:id="stateFilterComboBox" prefWidth="180.0" promptText="Socket State"/>
+        <Separator orientation="VERTICAL"/>
+        <Label text="Socket leaks (&gt;5 unclosed) degrade web browsing &amp; ping responsiveness." styleClass="text-small, text-subtle"/>
+    </HBox>
+
+    <!-- Virtualized Sockets Table -->
+    <TableView fx:id="socketsTable" VBox.vgrow="ALWAYS" styleClass="dense">
+        <columns>
+            <TableColumn fx:id="protoCol" text="Protocol" minWidth="65.0" prefWidth="75.0"/>
+            <TableColumn fx:id="localCol" text="Local Endpoint" minWidth="140.0" prefWidth="190.0"/>
+            <TableColumn fx:id="foreignCol" text="Remote Endpoint" minWidth="140.0" prefWidth="190.0"/>
+            <TableColumn fx:id="stateCol" text="State" minWidth="85.0" prefWidth="105.0"/>
+            <TableColumn fx:id="processCol" text="Owning Process / PID" minWidth="160.0" prefWidth="240.0"/>
+            <TableColumn fx:id="leakCol" text="Verdict" minWidth="100.0" prefWidth="140.0"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="No active sockets found matching current filter." styleClass="text-subtle"/>
+        </placeholder>
+    </TableView>
+
+</VBox>

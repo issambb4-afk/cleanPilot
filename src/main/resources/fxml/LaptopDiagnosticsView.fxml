@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cleanpilot.controller.LaptopDiagnosticsViewController"
+            fitToWidth="true" styleClass="content-scroll-pane">
+    <content>
+        <VBox spacing="14.0">
+            <padding>
+                <Insets top="4.0" right="16.0" bottom="24.0" left="4.0"/>
+            </padding>
+
+            <!-- Top header -->
+            <HBox alignment="CENTER_LEFT" spacing="16.0">
+                <VBox spacing="2.0">
+                    <Label text="Laptop &amp; System Health Hub" styleClass="title-2"/>
+                    <Label text="Deep analytics: battery wear, CPU thermals, volume low-space alerts, kernel pool leaks, and OS stability telemetry."
+                           styleClass="text-subtle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <CheckBox fx:id="autoRefreshCheckBox" text="Auto-Refresh (4s)" selected="false"/>
+                <Button text="📄 Export Scorecard" onAction="#onExportScorecard" styleClass="button-outlined">
+                    <tooltip><Tooltip text="Export diagnostic scorecard as formatted plain text summary"/></tooltip>
+                </Button>
+                <Button text="🔄 Refresh Diagnostics" onAction="#refreshDiagnostics" styleClass="button-outlined"/>
+            </HBox>
+
+            <!-- Overall Health Score Card -->
+            <VBox spacing="10.0" styleClass="card">
+                <padding><Insets top="14.0" right="16.0" bottom="14.0" left="16.0"/></padding>
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <VBox alignment="CENTER" spacing="3.0" minWidth="130.0">
+                        <Label text="HEALTH SCORE" styleClass="text-caption, text-subtle"/>
+                        <Label fx:id="overallScoreLabel" text="100/100" styleClass="title-1, text-success"/>
+                        <Label fx:id="gradeBadgeLabel" text="OPTIMAL" styleClass="badge, badge-success"/>
+                    </VBox>
+
+                    <Separator orientation="VERTICAL"/>
+
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label text="System Diagnostic Assessment &amp; Findings" styleClass="title-4"/>
+                        <VBox fx:id="issuesContainer" spacing="4.0"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- 2x2 Grid of Diagnostic Subsystems -->
+            <GridPane hgap="14.0" vgap="14.0">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <!-- Subsystem 1: Battery & Power Draw -->
+                <VBox spacing="10.0" styleClass="card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <padding><Insets top="12.0" right="14.0" bottom="12.0" left="14.0"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <Label text="🔋 Battery Health &amp; Power Subsystem" styleClass="title-4"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="batteryStatusBadge" text="AC Connected" styleClass="badge, badge-subtle"/>
+                    </HBox>
+
+                    <VBox spacing="3.0">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Remaining Charge:" styleClass="text-bold"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="batteryPercentLabel" text="100.0%" styleClass="text-bold"/>
+                        </HBox>
+                        <ProgressBar fx:id="batteryProgressBar" maxWidth="Infinity" progress="1.0" styleClass="success"/>
+                        <Label fx:id="batteryRuntimeLabel" text="Fully Charged (AC Connected)" styleClass="text-caption, text-subtle"/>
+                    </VBox>
+
+                    <Separator/>
+
+                    <GridPane vgap="6.0" hgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="110.0"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Capacity Health:" styleClass="text-subtle" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Label fx:id="batteryHealthLabel" text="100.0% of design capacity" styleClass="text-bold" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Cycle Count:" styleClass="text-subtle" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label fx:id="batteryCyclesLabel" text="0 cycles" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Power Draw Rate:" styleClass="text-subtle" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label fx:id="batteryPowerRateLabel" text="0.00 W" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Voltage / Chem:" styleClass="text-subtle" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label fx:id="batteryVoltageLabel" text="11.4 V • Li-Ion" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Subsystem 2: Thermals & Throttling -->
+                <VBox spacing="10.0" styleClass="card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <padding><Insets top="12.0" right="14.0" bottom="12.0" left="14.0"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <Label text="🌡 Thermals &amp; Cooling Subsystem" styleClass="title-4"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="thermalStatusBadge" text="Cool" styleClass="badge, badge-success"/>
+                    </HBox>
+
+                    <VBox spacing="3.0">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="CPU Package Temperature:" styleClass="text-bold"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="cpuTempLabel" text="45.0°C" styleClass="text-bold"/>
+                        </HBox>
+                        <ProgressBar fx:id="cpuTempBar" maxWidth="Infinity" progress="0.45" styleClass="success"/>
+                        <Label fx:id="throttlingRiskLabel" text="✔ No thermal downclocking / throttling detected." styleClass="text-caption, text-success"/>
+                    </VBox>
+
+                    <Separator/>
+
+                    <GridPane vgap="6.0" hgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="110.0"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Core Voltage:" styleClass="text-subtle" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Label fx:id="cpuVoltageLabel" text="Optimal" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Fan Speeds:" styleClass="text-subtle" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label fx:id="fanSpeedsLabel" text="Auto / Passive Cooling" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Cooling Advice:" styleClass="text-subtle" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label fx:id="coolingAdviceLabel" text="Air vents clear, operating normally" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Subsystem 3: Storage Drives & Logical Volumes -->
+                <VBox spacing="10.0" styleClass="card" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <padding><Insets top="12.0" right="14.0" bottom="12.0" left="14.0"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <Label text="💾 Storage &amp; Volume Saturation (TRIM)" styleClass="title-4"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="storageStatusBadge" text="Storage Healthy" styleClass="badge, badge-success"/>
+                    </HBox>
+
+                    <Label text="PARTITION HEADROOM &amp; CAPACITY" styleClass="text-caption, text-subtle"/>
+                    <VBox fx:id="storageVolumesContainer" spacing="6.0"/>
+
+                    <Separator/>
+
+                    <Label text="PHYSICAL DRIVES &amp; I/O QUEUE DEPTH" styleClass="text-caption, text-subtle"/>
+                    <VBox fx:id="storageListContainer" spacing="4.0"/>
+                </VBox>
+
+                <!-- Subsystem 4: Advanced Memory & Kernel Pools -->
+                <VBox spacing="10.0" styleClass="card" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <padding><Insets top="12.0" right="14.0" bottom="12.0" left="14.0"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <Label text="🧠 Memory &amp; Kernel Pools (Driver Leaks)" styleClass="title-4"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="memoryStatusBadge" text="Optimal" styleClass="badge, badge-success"/>
+                    </HBox>
+
+                    <VBox spacing="3.0">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Physical RAM Allocation:" styleClass="text-bold"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="ramUsageLabel" text="0 B / 0 B (0%)" styleClass="text-bold"/>
+                        </HBox>
+                        <ProgressBar fx:id="ramProgressBar" maxWidth="Infinity" progress="0.5" styleClass="accent"/>
+                    </VBox>
+
+                    <VBox spacing="3.0">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Virtual Commit Saturation:" styleClass="text-bold"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="commitUsageLabel" text="0 B / 0 B (0%)" styleClass="text-bold"/>
+                        </HBox>
+                        <ProgressBar fx:id="commitProgressBar" maxWidth="Infinity" progress="0.4" styleClass="success"/>
+                    </VBox>
+
+                    <VBox spacing="3.0">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Pagefile Swap Used:" styleClass="text-subtle"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="swapUsageLabel" text="0 B / 0 B (0%)" styleClass="text-subtle"/>
+                        </HBox>
+                        <ProgressBar fx:id="swapProgressBar" maxWidth="Infinity" progress="0.1" styleClass="badge-subtle"/>
+                    </VBox>
+
+                    <Separator/>
+
+                    <VBox spacing="3.0">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Kernel Pools (Paged / Non-Paged):" styleClass="text-subtle"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="kernelPoolBadge" text="Driver Pools Healthy" styleClass="badge, badge-success"/>
+                        </HBox>
+                        <Label fx:id="kernelPoolsLabel" text="Non-Paged: Normal | Paged: Normal" styleClass="text-small, text-bold"/>
+                        <Label fx:id="thrashingAlertLabel" text="✔ No memory thrashing detected" styleClass="text-small, text-success"/>
+                    </VBox>
+                </VBox>
+            </GridPane>
+
+            <!-- Subsystem 5: Operating System Stability & Crash Audit -->
+            <VBox spacing="10.0" styleClass="card">
+                <padding><Insets top="12.0" right="14.0" bottom="12.0" left="14.0"/></padding>
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <Label text="🛡 Operating System Stability &amp; Crash Audit" styleClass="title-4"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="stabilityBadge" text="Optimal Stability" styleClass="badge, badge-success"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label text="Continuous System Uptime:" styleClass="text-subtle"/>
+                    <Label fx:id="uptimeLabel" text="Just started" styleClass="text-bold"/>
+                </HBox>
+
+                <Separator/>
+
+                <Label text="RECENT SYSTEM CRASHES &amp; DIRTY SHUTDOWNS (EVENT LOG - LAST 14 DAYS)" styleClass="text-caption, text-subtle"/>
+                <VBox fx:id="crashesContainer" spacing="4.0"/>
+            </VBox>
+
+            <!-- Bottom Recommendations & Actions -->
+            <VBox spacing="10.0" styleClass="card">
+                <padding><Insets top="12.0" right="14.0" bottom="12.0" left="14.0"/></padding>
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label text="💡 Actionable System Health Recommendations" styleClass="title-4"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="🧹 Free Disk Space →" onAction="#onNavigateLargeFiles" styleClass="button-outlined"/>
+                    <Button text="⚡ Resource Monitor →" onAction="#onOpenResourceMonitor" styleClass="button-outlined"/>
+                    <Button text="🔧 Device Drivers →" onAction="#onNavigateDrivers" styleClass="button-outlined"/>
+                </HBox>
+                <VBox fx:id="recommendationsContainer" spacing="4.0"/>
+            </VBox>
+
+        </VBox>
+    </content>
+</ScrollPane>

@@ -1,0 +1,231 @@
+name: Multi-Platform Automated Release & Deployment
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version string (e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  # -------------------------------------------------------------
+  # 1. BUILD & PUBLISH TO GITHUB RELEASES
+  # -------------------------------------------------------------
+  build-and-release:
+    name: Build Native MSI, Portable Zip & Publish Release
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.version.outputs.val }}
+      msi_hash: ${{ steps.hashes.outputs.msi_hash }}
+      zip_hash: ${{ steps.hashes.outputs.zip_hash }}
+      msi_name: ${{ steps.artifacts.outputs.msi_name }}
+      zip_name: ${{ steps.artifacts.outputs.zip_name }}
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract Release Version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            CLEAN_VER="${{ github.event.inputs.version }}"
+          else
+            CLEAN_VER="${GITHUB_REF_NAME#v}"
+          fi
+          echo "val=${CLEAN_VER}" >> $GITHUB_OUTPUT
+          echo "Building CleanPilot Version: ${CLEAN_VER}"
+
+      - name: Setup Java 21 (Temurin LTS)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Run Unit Tests & Build Spring Boot Fat JAR
+        run: ./gradlew test bootJar
+
+      - name: Package Native Windows MSI & Portable AppImage via jpackage
+        run: |
+          ./gradlew packageAppImage packageMsi
+
+      - name: Bundle Portable ZIP Archive
+        id: artifacts
+        shell: pwsh
+        run: |
+          $ver = "${{ steps.version.outputs.val }}"
+          $distDir = "build/dist"
+          $zipName = "CleanPilot-${ver}-windows-x64-portable.zip"
+          $msiPath = Get-ChildItem "$distDir" -Filter "*.msi" | Select-Object -First 1
+          
+          # Compress portable folder
+          Compress-Archive -Path "$distDir/CleanPilot" -DestinationPath "$distDir/$zipName" -Force
+          
+          # Standardize MSI naming if needed
+          $finalMsiName = "CleanPilot-${ver}.msi"
+          if ($msiPath -and ($msiPath.Name -ne $finalMsiName)) {
+            Rename-Item -Path $msiPath.FullName -NewName $finalMsiName
+          }
+
+          echo "msi_name=$finalMsiName" >> $env:GITHUB_OUTPUT
+          echo "zip_name=$zipName" >> $env:GITHUB_OUTPUT
+
+      - name: Compute Cryptographic SHA-256 Checksums
+        id: hashes
+        shell: pwsh
+        run: |
+          $ver = "${{ steps.version.outputs.val }}"
+          $msi = "build/dist/${{ steps.artifacts.outputs.msi_name }}"
+          $zip = "build/dist/${{ steps.artifacts.outputs.zip_name }}"
+
+          $msiHash = (Get-FileHash -Path $msi -Algorithm SHA256).Hash.ToUpper()
+          $zipHash = (Get-FileHash -Path $zip -Algorithm SHA256).Hash.ToUpper()
+
+          # Output verification file
+          @"
+          $msiHash  ${{ steps.artifacts.outputs.msi_name }}
+          $zipHash  ${{ steps.artifacts.outputs.zip_name }}
+          "@ | Out-File -FilePath "build/dist/SHA256SUMS.txt" -Encoding ascii
+
+          echo "msi_hash=$msiHash" >> $env:GITHUB_OUTPUT
+          echo "zip_hash=$zipHash" >> $env:GITHUB_OUTPUT
+          Write-Host "MSI SHA256: $msiHash"
+          Write-Host "ZIP SHA256: $zipHash"
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name || format('v{0}', steps.version.outputs.val) }}
+          name: CleanPilot v${{ steps.version.outputs.val }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            build/dist/${{ steps.artifacts.outputs.msi_name }}
+            build/dist/${{ steps.artifacts.outputs.zip_name }}
+            build/dist/SHA256SUMS.txt
+
+  # -------------------------------------------------------------
+  # 2. AUTOMATED WINGET SUBMISSION (MICROSOFT PACKAGE MANAGER)
+  # -------------------------------------------------------------
+  deploy-winget:
+    name: Auto-Submit to Windows Package Manager (Winget)
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Submit Winget Package Update
+        uses: vedantmgoyal2009/winget-releaser@v2
+        if: env.WINGET_TOKEN != ''
+        env:
+          WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }}
+        with:
+          identifier: CleanPilot.CleanPilot
+          version: ${{ needs.build-and-release.outputs.version }}
+          installer-type: msi
+          installer-url: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name || format('v{0}', needs.build-and-release.outputs.version) }}/${{ needs.build-and-release.outputs.msi_name }}
+          token: ${{ secrets.WINGET_TOKEN }}
+
+  # -------------------------------------------------------------
+  # 3. AUTOMATED CHOCOLATEY DEPLOYMENT
+  # -------------------------------------------------------------
+  deploy-chocolatey:
+    name: Auto-Push to Chocolatey Community Repository
+    needs: build-and-release
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Configure Chocolatey Package with Release Hashes
+        shell: pwsh
+        run: |
+          $ver = "${{ needs.build-and-release.outputs.version }}"
+          $msiHash = "${{ needs.build-and-release.outputs.msi_hash }}"
+          $tag = "${{ github.ref_name || format('v{0}', needs.build-and-release.outputs.version) }}"
+          $msiName = "${{ needs.build-and-release.outputs.msi_name }}"
+          $repo = "${{ github.repository }}"
+          $msiUrl = "https://github.com/$repo/releases/download/$tag/$msiName"
+
+          # Update chocolateyinstall.ps1
+          $installScript = "distribution/chocolatey/tools/chocolateyinstall.ps1"
+          (Get-Content $installScript) -replace '<CALCULATED_SHA256_HASH>', $msiHash `
+                                       -replace 'https://.*CleanPilot-1.0.0.msi', $msiUrl |
+            Set-Content $installScript
+
+          # Pack the Chocolatey nupkg
+          choco pack distribution/chocolatey/cleanpilot.nuspec --version $ver --outputdirectory build/dist
+
+      - name: Push to Chocolatey Community Feed
+        if: env.CHOCOLATEY_API_KEY != ''
+        env:
+          CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
+        shell: pwsh
+        run: |
+          $ver = "${{ needs.build-and-release.outputs.version }}"
+          choco push "build/dist/cleanpilot.$ver.nupkg" --source https://push.chocolatey.com/ --key $env:CHOCOLATEY_API_KEY
+
+  # -------------------------------------------------------------
+  # 4. AUTOMATED SCOOP BUCKET UPDATE
+  # -------------------------------------------------------------
+  deploy-scoop:
+    name: Auto-Update Scoop Bucket Manifest
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Update Local Scoop Manifest
+        shell: bash
+        run: |
+          VER="${{ needs.build-and-release.outputs.version }}"
+          ZIP_HASH="${{ needs.build-and-release.outputs.zip_hash }}"
+          TAG="${{ github.ref_name || format('v{0}', needs.build-and-release.outputs.version) }}"
+          ZIP_NAME="${{ needs.build-and-release.outputs.zip_name }}"
+          REPO="${{ github.repository }}"
+          URL="https://github.com/$REPO/releases/download/$TAG/$ZIP_NAME"
+
+          python3 -c "
+          import json
+          with open('distribution/scoop/cleanpilot.json', 'r') as f:
+              data = json.load(f)
+          data['version'] = '$VER'
+          data['architecture']['64bit']['url'] = '$URL'
+          data['architecture']['64bit']['hash'] = '$ZIP_HASH'
+          with open('distribution/scoop/cleanpilot.json', 'w') as f:
+              json.dump(data, f, indent=2)
+          "
+          cat distribution/scoop/cleanpilot.json
+
+      - name: Push Updated Manifest to Scoop Bucket
+        if: env.SCOOP_BUCKET_PAT != '' && env.SCOOP_BUCKET_REPO != ''
+        env:
+          SCOOP_BUCKET_PAT: ${{ secrets.SCOOP_BUCKET_PAT }}
+          SCOOP_BUCKET_REPO: ${{ secrets.SCOOP_BUCKET_REPO }}
+        shell: bash
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git clone "https://x-access-token:${SCOOP_BUCKET_PAT}@github.com/${SCOOP_BUCKET_REPO}.git" scoop-bucket
+          cp distribution/scoop/cleanpilot.json scoop-bucket/bucket/cleanpilot.json || cp distribution/scoop/cleanpilot.json scoop-bucket/cleanpilot.json
+          cd scoop-bucket
+          git add .
+          git commit -m "chore(release): update CleanPilot to v${{ needs.build-and-release.outputs.version }}" || echo "No changes"
+          git push

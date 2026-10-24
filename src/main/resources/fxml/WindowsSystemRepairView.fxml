@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.WindowsSystemRepairViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Header & Hero Status -->
+    <VBox spacing="10.0">
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <Label text="Windows System Integrity &amp; Component Store Hub" styleClass="title-2"/>
+                    <Label fx:id="adminBadge" text="Standard User Mode" styleClass="badge, badge-info"/>
+                </HBox>
+                <Label text="Repair corrupted OS files (SFC/DISM), reclaim gigabytes from WinSxS &amp; update rollbacks, and de-bloat pre-installed UWP packages."
+                       styleClass="text-subtle"/>
+            </VBox>
+            <Button fx:id="refreshAllBtn" text="🔄 Refresh All" onAction="#onRefreshAll" styleClass="button-outlined"/>
+        </HBox>
+
+        <!-- KPI Summary Cards -->
+        <GridPane hgap="12.0" vgap="12.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="33.34" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="SYSTEM FILE INTEGRITY" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="integrityStatusLabel" text="Healthy" styleClass="title-3, text-bold, text-success"/>
+                <Label text="Component manifests &amp; system DLL status" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="RECLAIMABLE WINSXS &amp; CACHES" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="reclaimableWinSxSLabel" text="-" styleClass="title-3, text-bold, text-accent"/>
+                <Label text="Superseded updates &amp; SoftwareDistribution" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="DEBLOATABLE UWP APPS" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="debloatableCountLabel" text="-" styleClass="title-3, text-bold, text-warning"/>
+                <Label text="Removable Xbox, Bing, &amp; OEM packages" styleClass="text-small, text-subtle"/>
+            </VBox>
+        </GridPane>
+    </VBox>
+
+    <!-- Main Navigation Tabs -->
+    <TabPane VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+        <!-- Tab 1: Component Store & System Repair -->
+        <Tab text="🛡️ System Repair &amp; WinSxS">
+            <VBox spacing="12.0" style="-fx-padding: 12 0;">
+                <!-- WinSxS Action Card -->
+                <VBox spacing="10.0" styleClass="card" style="-fx-padding: 14;">
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                            <Label text="Windows Component Store (WinSxS) Cleanup" styleClass="title-4"/>
+                            <Label fx:id="winSxSSummaryLabel" text="Analyzing component store footprint..." wrapText="true" styleClass="text-subtle"/>
+                        </VBox>
+                        <Button fx:id="cleanWinSxSBtn" text="🧹 Clean WinSxS" minWidth="-Infinity" onAction="#onCleanComponentStore" styleClass="accent">
+                            <tooltip><Tooltip text="Purge superseded Windows component store updates and reclaimed space"/></tooltip>
+                        </Button>
+                    </HBox>
+                    <ProgressBar fx:id="winSxSProgressBar" progress="0.0" maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- SFC / DISM Integrity Card -->
+                <VBox spacing="10.0" styleClass="card" style="-fx-padding: 14;" VBox.vgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                            <Label text="System File Checker &amp; DISM Repair" styleClass="title-4"/>
+                            <Label fx:id="integritySummaryLabel" text="Verify protected Windows OS files and repair corruption." wrapText="true" styleClass="text-subtle"/>
+                        </VBox>
+                        <Button fx:id="scanHealthBtn" text="🔍 Verify" minWidth="-Infinity" onAction="#onScanHealth" styleClass="button-outlined">
+                            <tooltip><Tooltip text="Verify system protected file integrity without modifying disk"/></tooltip>
+                        </Button>
+                        <Button fx:id="repairHealthBtn" text="🛠 Auto-Repair" minWidth="-Infinity" onAction="#onRepairHealth" styleClass="accent">
+                            <tooltip><Tooltip text="Automatically restore corrupted files from local component store"/></tooltip>
+                        </Button>
+                    </HBox>
+                    <TextArea fx:id="repairLogArea" editable="false" VBox.vgrow="ALWAYS" prefRowCount="6"
+                              promptText="Repair process logs will appear here..."
+                              style="-fx-font-family: 'Consolas', monospace; -fx-font-size: 0.88em;"/>
+                </VBox>
+            </VBox>
+        </Tab>
+
+        <!-- Tab 2: UWP AppX De-Bloater -->
+        <Tab text="📦 Windows UWP De-Bloater">
+            <VBox spacing="10.0" style="-fx-padding: 12 0;">
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card" style="-fx-padding: 8 12;">
+                    <TextField fx:id="appxSearchField" promptText="🔍 Search package name, publisher, or category..." HBox.hgrow="ALWAYS" minWidth="240.0"/>
+                    <ComboBox fx:id="appxCategoryComboBox" prefWidth="180.0" promptText="App Category"/>
+                    <Button fx:id="removeSelectedAppxBtn" text="🗑 Uninstall Selected App" disable="true" onAction="#onRemoveSelectedAppx" styleClass="danger"/>
+                </HBox>
+
+                <TableView fx:id="appxTableView" VBox.vgrow="ALWAYS" styleClass="dense">
+                    <columns>
+                        <TableColumn fx:id="appNameCol" text="Application Name" prefWidth="220.0"/>
+                        <TableColumn fx:id="appCategoryCol" text="Category" prefWidth="140.0"/>
+                        <TableColumn fx:id="appPublisherCol" text="Publisher" prefWidth="170.0"/>
+                        <TableColumn fx:id="appSizeCol" text="Estimated Size" prefWidth="105.0"/>
+                        <TableColumn fx:id="appDescCol" text="Package Description" prefWidth="300.0"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN"/>
+                    </columnResizePolicy>
+                    <placeholder>
+                        <Label text="No debloatable UWP apps found or loading..." styleClass="text-subtle"/>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </Tab>
+    </TabPane>
+
+</VBox>

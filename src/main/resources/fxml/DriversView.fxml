@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.DriversViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Header Section with Summary Cards -->
+    <VBox spacing="10.0">
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                <Label text="Hardware &amp; Driver Compatibility Hub" styleClass="title-2"/>
+                <Label text="Inspect installed kernel drivers, hardware error states (ConfigManager), digital signatures, and laptop compatibility."
+                       styleClass="text-subtle"/>
+            </VBox>
+            <Button fx:id="backupBtn" text="💾 Backup Drivers" minWidth="-Infinity" onAction="#onBackupDrivers" styleClass="button-outlined">
+                <tooltip><Tooltip text="Export active third-party INF driver packages via pnputil"/></tooltip>
+            </Button>
+            <Button fx:id="refreshBtn" text="🔄 Refresh" minWidth="-Infinity" onAction="#loadDriverData" styleClass="button-outlined"/>
+            <Button fx:id="inspectBtn" text="🔍 Inspect Device" minWidth="-Infinity" disable="true" onAction="#showSelectedDriverDetails" styleClass="accent"/>
+        </HBox>
+
+        <!-- KPI Cards Grid -->
+        <GridPane hgap="12.0" vgap="12.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="TOTAL HARDWARE DEVICES" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="totalDevicesLabel" text="-" styleClass="title-3, text-bold"/>
+                <Label text="Discovered across all motherboard buses" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="OPERATIONAL &amp; COMPATIBLE" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="operationalCountLabel" text="-" styleClass="title-3, text-bold, text-success"/>
+                <Label text="Healthy drivers reporting CM_PROB_NONE" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="PROBLEMS / DISABLED" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="issuesCountLabel" text="-" styleClass="title-3, text-bold, text-danger"/>
+                <Label text="Devices reporting errors or disabled" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="OUTDATED / LEGACY" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="outdatedCountLabel" text="-" styleClass="title-3, text-bold, text-warning"/>
+                <Label text="Drivers older than 5 years (&gt;2021)" styleClass="text-small, text-subtle"/>
+            </VBox>
+        </GridPane>
+
+        <!-- Status Summary Banner -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card" style="-fx-padding: 8 14;">
+            <Label text="ℹ" styleClass="text-accent, text-bold"/>
+            <Label fx:id="statusSummaryLabel" text="Scanning system drivers..." HBox.hgrow="ALWAYS" styleClass="text-bold"/>
+        </HBox>
+    </VBox>
+
+    <!-- Filter Bar with Prefix Trie Search -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card" style="-fx-padding: 8 12;">
+        <TextField fx:id="searchField" promptText="🔍 Search hardware name, vendor, device ID, or class..."
+                   HBox.hgrow="ALWAYS" minWidth="220.0"/>
+        <ComboBox fx:id="classFilterComboBox" prefWidth="160.0" promptText="Device Class"/>
+        <ComboBox fx:id="statusFilterComboBox" prefWidth="160.0" promptText="Status"/>
+        <Separator orientation="VERTICAL"/>
+        <Label text="Double-click to inspect" styleClass="text-small, text-subtle"/>
+    </HBox>
+
+    <!-- Virtualized Drivers & Hardware Table -->
+    <TableView fx:id="driversTable" VBox.vgrow="ALWAYS" styleClass="dense">
+        <columns>
+            <TableColumn fx:id="nameCol" text="Device Name" minWidth="160.0" prefWidth="230.0"/>
+            <TableColumn fx:id="classCol" text="Class" minWidth="80.0" prefWidth="90.0"/>
+            <TableColumn fx:id="statusCol" text="Status" minWidth="75.0" prefWidth="85.0"/>
+            <TableColumn fx:id="compatibilityCol" text="Compatibility" minWidth="120.0" prefWidth="180.0"/>
+            <TableColumn fx:id="providerCol" text="Provider" minWidth="95.0" prefWidth="120.0"/>
+            <TableColumn fx:id="versionCol" text="Version" minWidth="85.0" prefWidth="110.0"/>
+            <TableColumn fx:id="dateCol" text="Release Date" minWidth="85.0" prefWidth="100.0"/>
+            <TableColumn fx:id="infCol" text="INF" minWidth="70.0" prefWidth="85.0"/>
+            <TableColumn fx:id="signedCol" text="Signature" minWidth="75.0" prefWidth="85.0"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="No devices match the current search or filters." styleClass="text-subtle"/>
+        </placeholder>
+    </TableView>
+
+</VBox>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 130" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="logoBgGrad_dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+    <linearGradient id="pilotTextGrad_dark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="60%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
+    <linearGradient id="shieldLeft_dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <linearGradient id="shieldRight_dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="spearGrad_dark" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <filter id="logoShadow_dark" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0284C7" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Mini Icon Mark (104x104 at x=12, y=13) -->
+  <g transform="translate(10, 10)">
+    <rect x="0" y="0" width="110" height="110" rx="26" fill="url(#logoBgGrad_dark)" stroke="#38BDF8" stroke-opacity="0.3" stroke-width="1.5" filter="url(#logoShadow_dark)"/>
+    <g transform="translate(5, 5) scale(0.195)">
+      <!-- Left Wing -->
+      <path d="M256 108 L142 208 C134 215 130 225 130 236 L130 312 C130 326 142 336 156 332 L212 316 C218 314 224 316 228 320 L246 342 C251 348 255 352 256 354 L256 108 Z" fill="url(#shieldLeft_dark)"/>
+      <!-- Right Wing -->
+      <path d="M256 108 L370 208 C378 215 382 225 382 236 L382 312 C382 326 370 336 356 332 L300 316 C294 314 288 316 284 320 L266 342 C261 348 257 352 256 354 L256 108 Z" fill="url(#shieldRight_dark)"/>
+      <!-- Center Spear -->
+      <path d="M256 82 L290 190 C292 196 288 202 282 202 L266 202 L266 376 C266 384 256 388 256 388 C256 388 246 384 246 376 L246 202 L230 202 C224 202 220 196 222 190 L256 82 Z" fill="url(#spearGrad_dark)"/>
+      <!-- Core Diamond -->
+      <polygon points="256,196 280,230 256,264 232,230" fill="#38BDF8"/>
+      <polygon points="256,206 272,230 256,254 240,230" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Typography -->
+  <g transform="translate(142, 0)">
+    <!-- Main Name -->
+    <text x="0" y="66" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="46" font-weight="800" letter-spacing="-0.5">
+      <tspan fill="#FFFFFF">Clean</tspan><tspan fill="url(#pilotTextGrad_dark)">Pilot</tspan>
+    </text>
+
+    <!-- Tagline -->
+    <text x="2" y="94" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#94A3B8" letter-spacing="1.8">
+      PRIVACY-FIRST SYSTEM &amp; STORAGE HUB
+    </text>
+
+    <!-- Zero Telemetry Badge -->
+    <g transform="translate(244, 28)">
+      <rect x="0" y="0" width="112" height="22" rx="11" fill="rgba(56, 189, 248, 0.12)" stroke="rgba(56, 189, 248, 0.3)" stroke-width="1"/>
+      <text x="56" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#38BDF8" text-anchor="middle" letter-spacing="0.5">
+        ZERO TELEMETRY
+      </text>
+    </g>
+  </g>
+</svg>

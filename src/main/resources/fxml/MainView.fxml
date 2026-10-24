@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cleanpilot.controller.MainViewController"
+            prefWidth="1200.0" prefHeight="780.0" minWidth="800.0" minHeight="600.0" styleClass="app-root">
+
+    <top>
+        <VBox styleClass="top-container">
+            <MenuBar fx:id="mainMenuBar">
+                <menus>
+                    <Menu fx:id="menuFile" text="_File">
+                        <MenuItem text="📊 Dashboard" onAction="#showDashboard" accelerator="Shortcut+D"/>
+                        <MenuItem text="⚡ Resource Monitor" onAction="#showProcesses" accelerator="Shortcut+R"/>
+                        <MenuItem text="🛡 Rogue Threats &amp; Shield" onAction="#showThreatHunter" accelerator="Shortcut+T"/>
+                        <MenuItem text="💻 Laptop Diagnostics" onAction="#showDiagnostics" accelerator="Shortcut+L"/>
+                        <MenuItem text="🔌 Hardware &amp; Drivers" onAction="#showDrivers" accelerator="Shortcut+K"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="💾 Large Files Scanner" onAction="#showLargeFiles" accelerator="Shortcut+O"/>
+                        <MenuItem text="👥 Duplicate Files Finder" onAction="#showDuplicates" accelerator="Shortcut+F"/>
+                        <MenuItem text="📜 Scan History" onAction="#showHistory" accelerator="Shortcut+H"/>
+                        <MenuItem text="♻ Trash &amp; Recovery" onAction="#showRecuperate" accelerator="Shortcut+U"/>
+                        <MenuItem text="🛠 Developer &amp; Caches" onAction="#showDeveloperCleaner" accelerator="Shortcut+Y"/>
+                        <MenuItem text="⏱ Startup Optimizer" onAction="#showStartupOptimizer" accelerator="Shortcut+S"/>
+                        <MenuItem text="📦 App Uninstaller" onAction="#showAppUninstaller" accelerator="Shortcut+I"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="⚙ Settings" onAction="#showSettings" accelerator="Shortcut+,"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="🚪 Exit" onAction="#onCloseWindow" accelerator="Shortcut+Q"/>
+                    </Menu>
+                    <Menu fx:id="menuView" text="_View">
+                        <MenuItem fx:id="menuToggleTheme" text="Toggle Theme (Dark/Light)" onAction="#onToggleTheme" accelerator="F2"/>
+                    </Menu>
+                    <Menu fx:id="menuWindow" text="_Window">
+                        <MenuItem fx:id="menuMinimize" text="Minimize / Reduce" onAction="#onMinimizeWindow" accelerator="Shortcut+M"/>
+                        <MenuItem fx:id="menuMaximize" text="Maximize / Restore" onAction="#onMaximizeWindow"/>
+                        <MenuItem fx:id="menuClose" text="Close Window" onAction="#onCloseWindow" accelerator="Shortcut+W"/>
+                    </Menu>
+                    <Menu fx:id="menuHelp" text="_Help">
+                        <MenuItem fx:id="menuAbout" text="ℹ About CleanPilot" onAction="#showAboutDialog" accelerator="F1"/>
+                    </Menu>
+                </menus>
+            </MenuBar>
+            <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="app-header">
+                <HBox alignment="CENTER" styleClass="brand-logo-badge">
+                    <Label text="⚡" styleClass="brand-logo-icon"/>
+                </HBox>
+                <VBox spacing="1.0">
+                    <Label text="CleanPilot" styleClass="app-title"/>
+                    <Label fx:id="appSubtitleLabel" text="Precision System Diagnostics &amp; Maintenance Hub" styleClass="app-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="privacyBadgeLabel" text="●  Zero Telemetry • 100% Offline" styleClass="badge-privacy">
+                    <tooltip><Tooltip text="CleanPilot executes strictly locally. No telemetry endpoints or diagnostic reports are uploaded."/></tooltip>
+                </Label>
+                <ComboBox fx:id="languageComboBox" prefWidth="135.0" styleClass="language-select-box">
+                    <tooltip><Tooltip text="Select Interface Language / Choisir la langue / اختر لغة الواجهة"/></tooltip>
+                </ComboBox>
+                <Button fx:id="themeToggleBtn" text="🌙 Dark Mode" onAction="#onToggleTheme" styleClass="theme-toggle-btn">
+                    <tooltip><Tooltip text="Switch between Primer Light and Primer Dark themes"/></tooltip>
+                </Button>
+            </HBox>
+        </VBox>
+    </top>
+
+    <left>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="nav-scroll">
+            <VBox spacing="3.0" prefWidth="256.0" styleClass="nav-rail">
+                <Label fx:id="sectionMainLabel" text="MAIN" styleClass="nav-section-header"/>
+                <Button fx:id="navDashboardBtn" text="Health Check" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showDashboard" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-activity" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="1-click health check, performance diagnosis, and safe cleanup"/></tooltip>
+                </Button>
+                <Button fx:id="navDevCleanerBtn" text="Developer Cleaner" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showDeveloperCleaner" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-wind" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Targeted cleanup of browser caches, node_modules, and build artifacts"/></tooltip>
+                </Button>
+
+                <Label fx:id="sectionPerfLabel" text="PERFORMANCE" styleClass="nav-section-header">
+                    <VBox.margin><Insets top="8.0"/></VBox.margin>
+                </Label>
+                <Button fx:id="navProcessesBtn" text="Resource Monitor" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showProcesses" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-zap" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Live monitoring of CPU, RAM, and system processes"/></tooltip>
+                </Button>
+                <Button fx:id="navStartupBtn" text="Startup Optimizer" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showStartupOptimizer" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-clock" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Optimize high-impact applications launched with Windows"/></tooltip>
+                </Button>
+                <Button fx:id="navDiagnosticsBtn" text="Laptop Diagnostics" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showDiagnostics" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-monitor" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Battery health, thermals, storage status, and OS stability"/></tooltip>
+                </Button>
+                <Button fx:id="navDriversBtn" text="Hardware &amp; Drivers" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showDrivers" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-cpu" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Kernel driver diagnostics, errors, and driver backups"/></tooltip>
+                </Button>
+
+                <Label fx:id="sectionSecLabel" text="SECURITY &amp; DISK TOOLS" styleClass="nav-section-header">
+                    <VBox.margin><Insets top="8.0"/></VBox.margin>
+                </Label>
+                <Button fx:id="navThreatHunterBtn" text="Threat Hunter" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showThreatHunter" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-shield" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Multi-signal detection of rogue processes and OS protection"/></tooltip>
+                </Button>
+                <Button fx:id="navLargeFilesBtn" text="Large Files" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showLargeFiles" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-hard-drive" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Interactive treemap to locate and manage giant files"/></tooltip>
+                </Button>
+                <Button fx:id="navDuplicatesBtn" text="Duplicate Files" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showDuplicates" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-copy" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Precise duplicate detection via SHA-256 hash finger-printing"/></tooltip>
+                </Button>
+                <Button fx:id="navUninstallerBtn" text="App Uninstaller" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showAppUninstaller" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-package" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Software uninstallation and AppData leftover cleanup"/></tooltip>
+                </Button>
+                <Button fx:id="navSystemRepairBtn" text="Windows Repair" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showSystemRepair" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-tool" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="SFC, DISM integrity checks, and WinSxS component cleanup"/></tooltip>
+                </Button>
+                <Button fx:id="navNetworkOptimizerBtn" text="Network Optimizer" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showNetworkOptimizer" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-globe" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="DNS cache flush and orphaned socket leak hunter"/></tooltip>
+                </Button>
+                <Button fx:id="navRecuperateBtn" text="Quarantine &amp; Trash" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showRecuperate" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-archive" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Two-tier recovery: CleanPilot Quarantine Vault and Recycle Bin"/></tooltip>
+                </Button>
+
+                <Label fx:id="sectionAuditLabel" text="OPTIONS &amp; AUDIT" styleClass="nav-section-header">
+                    <VBox.margin><Insets top="8.0"/></VBox.margin>
+                </Label>
+                <Button fx:id="navHistoryBtn" text="Operation History" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showHistory" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-file-text" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Audit trail of cleaning operations and reclaimed space"/></tooltip>
+                </Button>
+                <Button fx:id="navSettingsBtn" text="Settings &amp; Exclusions" maxWidth="Infinity" alignment="BASELINE_LEFT" graphicTextGap="10"
+                        onAction="#showSettings" styleClass="nav-button">
+                    <graphic>
+                        <StackPane styleClass="nav-icon-box">
+                            <FontIcon iconLiteral="fth-settings" iconSize="15" styleClass="nav-icon"/>
+                        </StackPane>
+                    </graphic>
+                    <tooltip><Tooltip text="Preferences, themes, and path exclusion guardrails"/></tooltip>
+                </Button>
+
+                <Region VBox.vgrow="ALWAYS" minHeight="16.0"/>
+
+                <VBox spacing="4.0" styleClass="sidebar-footer">
+                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                        <Label text="●" style="-fx-font-size: 0.9em; -fx-text-fill: #10b981;"/>
+                        <Label text="CleanPilot Desktop" style="-fx-text-fill: #e2e8f0; -fx-font-weight: 700; -fx-font-size: 0.82em;"/>
+                        <Label text="v1.0" styleClass="badge-pill-accent"/>
+                    </HBox>
+                    <Label fx:id="footerPrivacyLabel" text="100% Offline • Zero Telemetry" style="-fx-text-fill: #64748b; -fx-font-size: 0.72em;"/>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </left>
+
+    <center>
+        <StackPane fx:id="contentArea" styleClass="content-area">
+            <padding>
+                <Insets top="16.0" right="20.0" bottom="16.0" left="20.0"/>
+            </padding>
+        </StackPane>
+    </center>
+
+</BorderPane>

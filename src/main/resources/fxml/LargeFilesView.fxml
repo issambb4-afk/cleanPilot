@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.LargeFilesViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Top header & description -->
+    <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+            <Label text="Large Files Analyzer" styleClass="title-2"/>
+            <Label text="Identify and safely remove massive files with multi-attribute filtering, streaming hashes, and memory-safe scanning."
+                   styleClass="text-subtle"/>
+        </VBox>
+        <Button fx:id="smartCacheBtn" text="⚡ Smart Cache Presets" onAction="#onOpenCachePresets" styleClass="button-outlined">
+            <tooltip><Tooltip text="Scan common cache directories: user temp, thumbnail caches, error dumps"/></tooltip>
+        </Button>
+    </HBox>
+
+    <!-- Controls Panel -->
+    <VBox spacing="10.0" styleClass="card" style="-fx-padding: 12 16;">
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <Label text="Target Folder:" minWidth="90.0" styleClass="text-bold"/>
+            <TextField fx:id="targetPathField" HBox.hgrow="ALWAYS" promptText="Select a directory or drive to analyze..."/>
+            <Button text="Browse..." onAction="#onBrowseDirectory" styleClass="button-outlined"/>
+            <Button fx:id="scanBtn" text="🔍 Start Scan" onAction="#onStartScan" styleClass="accent"/>
+            <Button fx:id="cancelBtn" text="✖ Cancel" onAction="#onCancelScan" disable="true" styleClass="button-outlined"/>
+        </HBox>
+
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <Label text="Min File Size:" styleClass="text-subtle"/>
+            <ComboBox fx:id="minSizeComboBox" prefWidth="110.0"/>
+
+            <Label text="Category:" styleClass="text-subtle"/>
+            <ComboBox fx:id="categoryComboBox" prefWidth="140.0"/>
+
+            <Label text="Sort By:" styleClass="text-subtle"/>
+            <ComboBox fx:id="sortByComboBox" prefWidth="170.0"/>
+
+            <Label text="Filter:" styleClass="text-subtle"/>
+            <TextField fx:id="searchField" promptText="Filter by file name or path..." HBox.hgrow="ALWAYS" minWidth="160.0"/>
+        </HBox>
+
+        <VBox spacing="3.0">
+            <ProgressBar fx:id="scanProgressBar" maxWidth="Infinity" visible="false"/>
+            <Label fx:id="scanStatusLabel" text="Ready to scan." styleClass="text-caption, text-subtle"/>
+        </VBox>
+    </VBox>
+
+    <!-- TabPane for Table View vs Visual Disk Treemap -->
+    <TabPane VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+            <Tab text="📄 File Inventory">
+                <TableView fx:id="filesTable" styleClass="dense">
+                    <columns>
+                        <TableColumn fx:id="selectCol" text="" prefWidth="40.0" minWidth="40.0" sortable="false" resizable="false"/>
+                        <TableColumn fx:id="nameCol" text="File Name" minWidth="160.0" prefWidth="220.0"/>
+                        <TableColumn fx:id="categoryCol" text="Category" minWidth="90.0" prefWidth="110.0"/>
+                        <TableColumn fx:id="sizeCol" text="Size" minWidth="80.0" prefWidth="95.0"/>
+                        <TableColumn fx:id="dateCol" text="Modified" minWidth="110.0" prefWidth="130.0"/>
+                        <TableColumn fx:id="pathCol" text="Path" minWidth="200.0" prefWidth="380.0"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                    <placeholder>
+                        <Label text="No large files detected. Select a target directory above and click 'Start Scan'." styleClass="text-subtle"/>
+                    </placeholder>
+                </TableView>
+            </Tab>
+            <Tab text="🗺 Storage Treemap">
+                <VBox spacing="8.0" style="-fx-padding: 8 0;">
+                    <StackPane fx:id="treemapContainer" VBox.vgrow="ALWAYS"
+                               style="-fx-background-color: -color-bg-subtle; -fx-background-radius: 6; -fx-border-color: -color-border-subtle; -fx-border-radius: 6;">
+                        <Label text="Interactive storage treemap will visualize storage consumption after scanning." styleClass="text-subtle"/>
+                    </StackPane>
+                </VBox>
+            </Tab>
+        </tabs>
+    </TabPane>
+
+    <!-- Bottom Actions Toolbar -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 14;">
+        <Button text="Select All" onAction="#onSelectAll" styleClass="button-outlined"/>
+        <Button text="Deselect All" onAction="#onDeselectAll" styleClass="button-outlined"/>
+        <Separator orientation="VERTICAL"/>
+        <Label fx:id="selectionSummaryLabel" text="Selected: 0 files (0 B)" styleClass="text-bold"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="deleteSelectedBtn" text="🗑 Move Selected to Trash" onAction="#onDeleteSelected"
+                disable="true" styleClass="danger">
+            <tooltip><Tooltip text="Sends selected files to Windows Recycle Bin with soft-delete safety"/></tooltip>
+        </Button>
+    </HBox>
+
+</VBox>

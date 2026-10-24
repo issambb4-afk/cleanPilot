@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.DeveloperCleanerViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+            <Label text="Developer &amp; Power-User Disk Hunter" styleClass="title-2"/>
+            <Label text="Locate and reclaim massive dormant disk space from node_modules, build outputs (Gradle/Maven/Rust), Python virtualenvs, and WSL2 disks."
+                   styleClass="text-subtle"/>
+        </VBox>
+        <Button fx:id="addFolderBtn" text="📁 Add Folder" minWidth="-Infinity" onAction="#onAddCustomFolder" styleClass="button-outlined">
+            <tooltip><Tooltip text="Add a specific workspace or project root to scan"/></tooltip>
+        </Button>
+        <Button fx:id="scanBtn" text="⚡ Scan Workspaces" minWidth="-Infinity" onAction="#onScanWorkspaces" styleClass="accent">
+            <tooltip><Tooltip text="Scan default user workspaces, code repos, and package manager caches"/></tooltip>
+        </Button>
+    </HBox>
+
+    <!-- KPI Cards Grid -->
+    <GridPane hgap="12.0" vgap="12.0">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="33.34" hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="TOTAL RECLAIMABLE SPACE" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="totalReclaimableLabel" text="0 B" styleClass="title-3, text-bold, text-accent"/>
+            <Label fx:id="totalArtifactsCountLabel" text="0 artifacts detected" styleClass="text-small, text-subtle"/>
+        </VBox>
+
+        <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="NODE_MODULES &amp; BUILDS" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="nodeModulesSizeLabel" text="0 B" styleClass="title-3, text-bold"/>
+            <Label fx:id="nodeModulesCountLabel" text="0 project folders" styleClass="text-small, text-subtle"/>
+        </VBox>
+
+        <VBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="WSL2 &amp; VIRTUAL DISKS" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="wslSizeLabel" text="0 B" styleClass="title-3, text-bold, text-warning"/>
+            <Label text="Shrinkable via diskpart compact" styleClass="text-small, text-subtle"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Filter & Search Controls -->
+    <HBox spacing="8.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 12;">
+        <ToggleButton fx:id="filterAllBtn" text="All Artifacts" selected="true" styleClass="button-outlined"/>
+        <ToggleButton fx:id="filterNodeBtn" text="Node.js" styleClass="button-outlined"/>
+        <ToggleButton fx:id="filterBuildsBtn" text="Build Caches" styleClass="button-outlined"/>
+        <ToggleButton fx:id="filterPythonBtn" text="Python (.venv)" styleClass="button-outlined"/>
+        <ToggleButton fx:id="filterWslBtn" text="WSL2 Disks" styleClass="button-outlined"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="searchField" promptText="🔍 Filter by project name or path..." prefWidth="250.0"/>
+    </HBox>
+
+    <!-- Virtualized Table of Developer Artifacts -->
+    <TableView fx:id="artifactTable" VBox.vgrow="ALWAYS" styleClass="dense">
+        <columns>
+            <TableColumn fx:id="selectCol" text="" prefWidth="40.0" minWidth="40.0" sortable="false" resizable="false"/>
+            <TableColumn fx:id="typeCol" text="Type" minWidth="90.0" prefWidth="110.0"/>
+            <TableColumn fx:id="projectCol" text="Project" minWidth="130.0" prefWidth="160.0"/>
+            <TableColumn fx:id="nameCol" text="Artifact Name" minWidth="120.0" prefWidth="150.0"/>
+            <TableColumn fx:id="sizeCol" text="Size" minWidth="80.0" prefWidth="95.0"/>
+            <TableColumn fx:id="fileCountCol" text="Files" minWidth="65.0" prefWidth="75.0"/>
+            <TableColumn fx:id="modifiedCol" text="Modified" minWidth="100.0" prefWidth="120.0"/>
+            <TableColumn fx:id="pathCol" text="Path" minWidth="180.0" prefWidth="300.0"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="No developer artifacts found. Click 'Scan Developer Workspaces' to begin." styleClass="text-subtle"/>
+        </placeholder>
+    </TableView>
+
+    <!-- Bottom Actions Toolbar -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 14;">
+        <Button text="Select All" onAction="#onSelectAll" styleClass="button-outlined"/>
+        <Button text="Deselect All" onAction="#onDeselectAll" styleClass="button-outlined"/>
+        <Separator orientation="VERTICAL"/>
+        <Label fx:id="selectionSummaryLabel" text="Selected: 0 artifacts (0 B)" styleClass="text-bold"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="compactWslBtn" text="⚡ Shrink WSL2 Disk" onAction="#onCompactWsl" disable="true" styleClass="button-outlined">
+            <tooltip><Tooltip text="Run safe diskpart compact operation to recover host VHDX space"/></tooltip>
+        </Button>
+        <Button fx:id="cleanSelectedBtn" text="🗑 Clean Selected Artifacts" onAction="#onCleanSelected" disable="true" styleClass="danger">
+            <tooltip><Tooltip text="Preview targets and permanently remove selected build and dependency caches"/></tooltip>
+        </Button>
+    </HBox>
+
+</VBox>

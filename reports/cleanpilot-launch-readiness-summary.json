@@ -1,0 +1,46 @@
+{
+  "project": "CleanPilot",
+  "audit_timestamp": "2026-10-24T15:16:00+02:00",
+  "audited_commit": null,
+  "working_tree_clean": null,
+  "overall_score": 58.5,
+  "maximum_score": 100,
+  "score_is_provisional": true,
+  "mandatory_gate_triggered": true,
+  "release_decisions": {
+    "internal_development": "CONDITIONAL GO",
+    "private_beta": "NO-GO",
+    "public_download": "NO-GO",
+    "public_marketing": "NO-GO"
+  },
+  "critical_findings": 0,
+  "high_findings": 7,
+  "medium_findings": 8,
+  "low_findings": 6,
+  "not_verified_items": 36,
+  "mandatory_blockers": [
+    "Unsigned Windows release binaries (Authenticode status: NotSigned, no certificate or timestamping configured)",
+    "No standalone installer package (MSI) exists on disk; WiX Toolset is missing from the environment",
+    "All package manager distribution manifests (winget, chocolatey, scoop) contain placeholder hashes (<CALCULATED_SHA256_HASH>) and point to non-existent release URLs",
+    "No public privacy policy document or live privacy URL exists (violating zero-telemetry disclosure requirements)",
+    "No LICENSE file present in the repository root despite public Apache-2.0 distribution claims",
+    "Repository is not under Git version control, preventing commit-level traceability and build reproducibility",
+    "Destructive WinSxS cleanup and DISM/SFC system repair lack preview and confirmation modals in WindowsSystemRepairViewController, completely bypassing the OperationLifecycleManager state machine"
+  ],
+  "top_priorities": [
+    "Implement OperationConfirmationDialog modals and OperationLifecycleManager journaling for WinSxS cleanup, System File Repair, and Network Stack reset",
+    "Acquire an Authenticode code-signing certificate and configure signtool in Gradle for release executables and MSI installers",
+    "Install WiX Toolset v3.x and generate verified, installable CleanPilot-1.0.0.msi installer artifacts",
+    "Compute real SHA-256 hashes and update winget, chocolatey, and scoop release manifests",
+    "Create official PRIVACY.md, LICENSE, and SECURITY.md files in repository root",
+    "Fix WindowsSecurityUtils.runElevated timeout (120s is insufficient for DISM/SFC), implement descendant process tree termination, and capture inner elevated exit codes",
+    "Initialize Git repository and establish automated GitHub Actions CI/CD pipeline"
+  ],
+  "audit_limitations": [
+    "Project directory is not a Git repository; commit hash, commit history, and working tree purity could not be inspected",
+    "WiX Toolset was unavailable; native MSI installer generation (packageMsi) could not be executed or tested for installation, upgrade, and uninstallation",
+    "Windows 10, Windows on ARM64, and secondary physical filesystem volumes (ReFS, FAT32/exFAT) could not be tested on live host hardware (audited on Windows 11 x64 only)",
+    "No automated UI tests (TestFX) exist; JavaFX user interactions, drag/drop, and view transitions were inspected statically",
+    "UAC privilege elevation flows were inspected statically and through mock tests; live elevation prompts were not triggered on host to maintain system integrity"
+  ]
+}

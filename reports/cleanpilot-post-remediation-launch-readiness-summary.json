@@ -1,0 +1,39 @@
+{
+  "project": "CleanPilot",
+  "audit_timestamp": "2026-10-24T17:48:00+02:00",
+  "audited_commit": null,
+  "working_tree_clean": null,
+  "overall_score": 84.6,
+  "maximum_score": 100,
+  "score_is_provisional": false,
+  "mandatory_gate_triggered": true,
+  "release_decisions": {
+    "internal_development": "GO",
+    "private_beta": "CONDITIONAL GO",
+    "public_download": "NO-GO",
+    "public_marketing": "NO-GO"
+  },
+  "critical_findings": 0,
+  "high_findings": 2,
+  "medium_findings": 5,
+  "low_findings": 4,
+  "not_verified_items": 21,
+  "mandatory_blockers": [
+    "Unsigned Windows release binaries (Authenticode status: NotSigned, no certificate or timestamping configured; will trigger Microsoft Defender SmartScreen untrusted publisher warnings)",
+    "No standalone MSI installer package exists on disk (requires WiX Toolset to compile CleanPilot-1.0.0.msi for enterprise and machine-wide deployment)"
+  ],
+  "top_priorities": [
+    "Acquire an Authenticode code-signing certificate (EV or standard) and configure signtool in Gradle build script",
+    "Install WiX Toolset v3.14/v4 and build verified CleanPilot-1.0.0.msi installer artifact",
+    "Initialize Git repository, push codebase to remote GitHub repository, and activate GitHub Actions CI/CD pipeline",
+    "Publish release binaries and MSI packages to GitHub Releases matching the URLs in Winget, Chocolatey, and Scoop manifests",
+    "Conduct physical testing on Windows 10 x64, Windows 11 ARM64, and non-NTFS volumes (FAT32, exFAT)"
+  ],
+  "audit_limitations": [
+    "Repository is not yet committed to Git; commit hash and commit-level provenance could not be recorded",
+    "WiX Toolset is not installed in the audit environment; MSI installer compilation could not be executed locally",
+    "Hardware-specific architectures (Windows on ARM64) and non-NTFS physical drives were not available in the local execution environment",
+    "Live interactive UAC elevation prompts were evaluated statically and via subprocess wrapper tests to preserve host system integrity",
+    "UI event loop and view rendering were inspected statically and verified via JavaFX ApplicationContext initialization rather than TestFX robot automation"
+  ]
+}

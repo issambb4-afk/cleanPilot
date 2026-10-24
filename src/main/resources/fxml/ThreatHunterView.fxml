@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.ThreatHunterViewController"
+      spacing="10.0" VBox.vgrow="ALWAYS">
+
+    <!-- Header Section -->
+    <VBox spacing="8.0">
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <Label text="%threat.title" styleClass="title-2"/>
+                    <Label fx:id="shieldBadge" text="%threat.shield_active" styleClass="badge, badge-success"/>
+                </HBox>
+                <Label text="%threat.subtitle" wrapText="true" styleClass="text-subtle"/>
+            </VBox>
+            <Button fx:id="scanBtn" text="%threat.btn.scan" minWidth="-Infinity" onAction="#onScanThreats" styleClass="button-outlined">
+                <tooltip><Tooltip text="%threat.btn.scan.tooltip"/></tooltip>
+            </Button>
+            <Button fx:id="freezeBtn" text="%threat.btn.freeze" minWidth="-Infinity" onAction="#onFreezeSelected" styleClass="button-outlined">
+                <tooltip><Tooltip text="%threat.btn.freeze.tooltip"/></tooltip>
+            </Button>
+            <Button fx:id="terminateBtn" text="%threat.btn.terminate" minWidth="-Infinity" onAction="#onTerminateSelected" styleClass="danger">
+                <tooltip><Tooltip text="%threat.btn.terminate.tooltip"/></tooltip>
+            </Button>
+        </HBox>
+
+        <!-- KPI Cards Grid (Compact & Responsive) -->
+        <GridPane hgap="10.0" vgap="8.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <VBox spacing="2.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 6 12;">
+                <Label text="%threat.kpi.overall_status" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="overallThreatLabel" text="Analyzing..." wrapText="true" styleClass="title-3, text-bold"/>
+                <Label fx:id="threatSummaryLabel" text="Evaluating active memory &amp; network" wrapText="true" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 6 12;">
+                <Label text="%threat.kpi.anomalies" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="threatCountLabel" text="0" styleClass="title-3, text-bold"/>
+                <Label text="%threat.kpi.anomalies.sub" wrapText="true" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="2.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 6 12;">
+                <Label text="%threat.kpi.beacons" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="beaconCountLabel" text="0" styleClass="title-3, text-bold"/>
+                <Label text="%threat.kpi.beacons.sub" wrapText="true" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="2.0" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 6 12;">
+                <Label text="%threat.kpi.shield" styleClass="text-caption, text-subtle"/>
+                <Label text="%threat.kpi.shield.protected" styleClass="title-3, text-bold, text-success"/>
+                <Label text="%threat.kpi.shield.sub" wrapText="true" styleClass="text-small, text-subtle"/>
+            </VBox>
+        </GridPane>
+    </VBox>
+
+    <!-- Filter & Search Controls -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 6 10;">
+        <TextField fx:id="searchField" promptText="%threat.search.prompt" HBox.hgrow="ALWAYS" minWidth="180.0"/>
+        <ComboBox fx:id="threatFilterComboBox" prefWidth="180.0"/>
+        <Button fx:id="resumeBtn" text="%threat.btn.resume" minWidth="-Infinity" onAction="#onResumeSelected" styleClass="button-outlined">
+            <tooltip><Tooltip text="%threat.btn.resume.tooltip"/></tooltip>
+        </Button>
+        <Separator orientation="VERTICAL"/>
+        <Label fx:id="safetyNoticeLabel" text="%threat.safety_notice" wrapText="true" styleClass="text-small, text-subtle" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- SplitPane: Protected Table on top with minHeight, Tabbed Details Inspector at bottom -->
+    <SplitPane orientation="VERTICAL" dividerPositions="0.65" VBox.vgrow="ALWAYS">
+        <!-- Table View: minHeight ensures multiple rows are always clearly visible -->
+        <TableView fx:id="threatTable" minHeight="240.0" styleClass="dense">
+            <columns>
+                <TableColumn fx:id="threatLevelCol" text="%threat.col.level" minWidth="90.0" prefWidth="110.0"/>
+                <TableColumn fx:id="riskScoreCol" text="%threat.col.score" minWidth="50.0" prefWidth="60.0"/>
+                <TableColumn fx:id="processCol" text="%threat.col.process" minWidth="150.0" prefWidth="175.0"/>
+                <TableColumn fx:id="protectionCol" text="%threat.col.shield" minWidth="95.0" prefWidth="115.0"/>
+                <TableColumn fx:id="cpuCol" text="%threat.col.cpu" minWidth="50.0" prefWidth="60.0"/>
+                <TableColumn fx:id="ramCol" text="%threat.col.ram" minWidth="65.0" prefWidth="75.0"/>
+                <TableColumn fx:id="socketsCol" text="%threat.col.sockets" minWidth="65.0" prefWidth="75.0"/>
+                <TableColumn fx:id="signatureCol" text="%threat.col.signature" minWidth="95.0" prefWidth="115.0"/>
+                <TableColumn fx:id="entropyCol" text="%threat.col.entropy" minWidth="65.0" prefWidth="75.0"/>
+                <TableColumn fx:id="pathCol" text="%threat.col.path" minWidth="180.0" prefWidth="280.0"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+            <placeholder>
+                <Label text="%threat.placeholder" styleClass="text-subtle"/>
+            </placeholder>
+        </TableView>
+
+        <!-- Redesigned Inspector: Tabbed, responsive, never squashes, easily closable -->
+        <VBox fx:id="detailsCard" spacing="6.0" styleClass="card" style="-fx-padding: 8 12;"
+              SplitPane.resizableWithParent="false" minHeight="150.0" prefHeight="210.0" maxHeight="320.0">
+            <!-- Header bar with process summary & quick actions -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label fx:id="selectedProcessTitle" text="%threat.details.no_selection"
+                       styleClass="text-bold" style="-fx-font-size: 1.05em;" HBox.hgrow="ALWAYS" maxWidth="Infinity" textOverrun="ELLIPSIS"/>
+                <Label fx:id="selectedProcessStatusBadge" text="" styleClass="badge"/>
+                <Button fx:id="copyPathBtn" text="%threat.details.copy_path" onAction="#onCopyPath" disable="true"
+                        styleClass="button-outlined" style="-fx-padding: 3 8; -fx-font-size: 0.82em;"/>
+                <Button fx:id="closeDetailsBtn" text="%threat.details.close" onAction="#onCloseDetails" disable="true"
+                        styleClass="button-outlined" style="-fx-padding: 3 8; -fx-font-size: 0.82em;"/>
+            </HBox>
+            <Separator/>
+
+            <!-- TabPane organizing Analysis and Telemetry cleanly -->
+            <TabPane fx:id="detailsTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                <!-- Tab 1: Threat Indicators & Explainability -->
+                <Tab text="%threat.details.tab.indicators">
+                    <ListView fx:id="threatReasonsListView" VBox.vgrow="ALWAYS" minHeight="60.0" styleClass="dense">
+                        <placeholder>
+                            <Label text="%threat.details.no_reasons" styleClass="text-subtle"/>
+                        </placeholder>
+                    </ListView>
+                </Tab>
+
+                <!-- Tab 2: Detailed Process & Network Telemetry with wrapped labels and copy actions -->
+                <Tab text="%threat.details.tab.telemetry">
+                    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-padding: 6 0 0 0;" VBox.vgrow="ALWAYS">
+                        <GridPane hgap="12.0" vgap="8.0" style="-fx-padding: 6 4;">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="120.0" prefWidth="130.0" hgrow="NEVER"/>
+                                <ColumnConstraints hgrow="ALWAYS" minWidth="0.0"/>
+                            </columnConstraints>
+
+                            <!-- Executable Path -->
+                            <Label text="%threat.details.path" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="text-caption, text-subtle"/>
+                            <HBox spacing="8.0" alignment="CENTER_LEFT" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                                <Label fx:id="selectedPathLabel" text="-" wrapText="true" minWidth="0.0" HBox.hgrow="ALWAYS"
+                                       styleClass="text-bold" style="-fx-font-family: monospace; -fx-font-size: 0.9em;"/>
+                                <Button text="📋" onAction="#onCopyPath" styleClass="button-outlined" style="-fx-padding: 2 6; -fx-font-size: 0.8em;">
+                                    <tooltip><Tooltip text="%threat.details.copy_path"/></tooltip>
+                                </Button>
+                            </HBox>
+
+                            <!-- Command Line -->
+                            <Label text="%threat.details.cmd" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="text-caption, text-subtle"/>
+                            <HBox spacing="8.0" alignment="CENTER_LEFT" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                                <Label fx:id="selectedCmdLabel" text="-" wrapText="true" minWidth="0.0" HBox.hgrow="ALWAYS"
+                                       style="-fx-font-family: monospace; -fx-font-size: 0.88em; -fx-text-fill: -color-fg-muted;"/>
+                                <Button text="📋" onAction="#onCopyCmd" styleClass="button-outlined" style="-fx-padding: 2 6; -fx-font-size: 0.8em;">
+                                    <tooltip><Tooltip text="Copy Command Line"/></tooltip>
+                                </Button>
+                            </HBox>
+
+                            <!-- Signer Identity -->
+                            <Label text="%threat.details.signer" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="text-caption, text-subtle"/>
+                            <Label fx:id="selectedSignerLabel" text="-" wrapText="true" minWidth="0.0" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <!-- Foreign Sockets -->
+                            <Label text="%threat.details.sockets" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="text-caption, text-subtle"/>
+                            <Label fx:id="selectedSocketsLabel" text="None" wrapText="true" minWidth="0.0" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </ScrollPane>
+                </Tab>
+            </TabPane>
+        </VBox>
+    </SplitPane>
+
+</VBox>

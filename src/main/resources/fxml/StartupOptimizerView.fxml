@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.StartupOptimizerViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+            <Label text="Windows Startup &amp; Boot Optimizer" styleClass="title-2"/>
+            <Label text="Review and disable high-impact background programs launching with Windows to accelerate boot time and conserve RAM."
+                   wrapText="true" styleClass="text-subtle"/>
+        </VBox>
+        <Button text="🔄 Refresh" minWidth="-Infinity" onAction="#onRefresh" styleClass="button-outlined"/>
+    </HBox>
+
+    <!-- KPI Summary Cards -->
+    <GridPane hgap="12.0" vgap="12.0">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="25.0" hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="TOTAL STARTUP PROGRAMS" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="totalAppsLabel" text="-" styleClass="title-3, text-bold"/>
+            <Label text="Configured in Registry &amp; Startup folders" wrapText="true" styleClass="text-small, text-subtle"/>
+        </VBox>
+
+        <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="HIGH BOOT IMPACT" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="highImpactLabel" text="-" styleClass="title-3, text-bold, text-danger"/>
+            <Label text="Delays Windows desktop readiness" wrapText="true" styleClass="text-small, text-subtle"/>
+        </VBox>
+
+        <VBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="DISABLED / OPTIMIZED" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="disabledAppsLabel" text="-" styleClass="title-3, text-bold, text-success"/>
+            <Label text="Safely stored in CleanPilot vault" wrapText="true" styleClass="text-small, text-subtle"/>
+        </VBox>
+
+        <VBox spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="LAST BOOT DURATION" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="bootDurationLabel" text="-" styleClass="title-3, text-bold, text-accent"/>
+            <Label fx:id="bootVerdictLabel" text="Analyzing boot traces..." wrapText="true" styleClass="text-small, text-subtle"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Search & Filter Controls -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 12;">
+        <TextField fx:id="searchField" promptText="🔍 Filter by application name, publisher, or command..." HBox.hgrow="ALWAYS" minWidth="200.0"/>
+        <Button text="⚡ Optimize Boot" minWidth="-Infinity" onAction="#onDisableAllHighImpact" styleClass="accent">
+            <tooltip><Tooltip text="Safely disable all high-impact startup items to accelerate boot time"/></tooltip>
+        </Button>
+    </HBox>
+
+    <!-- Table of Startup Programs -->
+    <TableView fx:id="startupTable" VBox.vgrow="ALWAYS" styleClass="dense">
+        <columns>
+            <TableColumn fx:id="statusCol" text="Status" minWidth="80.0" prefWidth="95.0"/>
+            <TableColumn fx:id="nameCol" text="Application Name" minWidth="160.0" prefWidth="200.0"/>
+            <TableColumn fx:id="publisherCol" text="Publisher" minWidth="130.0" prefWidth="160.0"/>
+            <TableColumn fx:id="impactCol" text="Boot Impact" minWidth="95.0" prefWidth="110.0"/>
+            <TableColumn fx:id="locationCol" text="Source" minWidth="130.0" prefWidth="160.0"/>
+            <TableColumn fx:id="commandCol" text="Executable Path" minWidth="200.0" prefWidth="350.0"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="No startup applications detected." styleClass="text-subtle"/>
+        </placeholder>
+    </TableView>
+
+</VBox>

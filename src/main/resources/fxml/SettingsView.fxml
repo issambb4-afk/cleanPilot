@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cleanpilot.controller.SettingsViewController"
+            fitToWidth="true" styleClass="dashboard-scroll">
+    <content>
+        <VBox spacing="16.0">
+            <padding>
+                <Insets top="4.0" right="20.0" bottom="24.0" left="4.0"/>
+            </padding>
+
+            <!-- Header -->
+            <VBox spacing="2.0">
+                <Label text="%settings.title" styleClass="title-2"/>
+                <Label text="%settings.subtitle" styleClass="text-subtle"/>
+            </VBox>
+
+            <!-- Language Section -->
+            <VBox spacing="10.0" styleClass="card" style="-fx-padding: 14 16;">
+                <Label text="%settings.language.title" styleClass="title-4"/>
+                <Label text="%settings.language.subtitle" styleClass="text-subtle"/>
+                <HBox spacing="24.0" alignment="CENTER_LEFT">
+                    <fx:define>
+                        <ToggleGroup fx:id="languageGroup"/>
+                    </fx:define>
+                    <RadioButton fx:id="enLanguageRadio" text="%settings.language.en" toggleGroup="$languageGroup"/>
+                    <RadioButton fx:id="frLanguageRadio" text="%settings.language.fr" toggleGroup="$languageGroup"/>
+                    <RadioButton fx:id="arLanguageRadio" text="%settings.language.ar" toggleGroup="$languageGroup"/>
+                </HBox>
+            </VBox>
+
+            <!-- Appearance Section -->
+            <VBox spacing="10.0" styleClass="card" style="-fx-padding: 14 16;">
+                <Label text="%settings.appearance.title" styleClass="title-4"/>
+                <Label text="%settings.appearance.subtitle" styleClass="text-subtle"/>
+                <HBox spacing="24.0" alignment="CENTER_LEFT">
+                    <fx:define>
+                        <ToggleGroup fx:id="themeGroup"/>
+                    </fx:define>
+                    <RadioButton fx:id="darkThemeRadio" text="%settings.theme.dark" toggleGroup="$themeGroup"/>
+                    <RadioButton fx:id="lightThemeRadio" text="%settings.theme.light" toggleGroup="$themeGroup"/>
+                </HBox>
+            </VBox>
+
+            <!-- Scanning Preferences -->
+            <VBox spacing="10.0" styleClass="card" style="-fx-padding: 14 16;">
+                <Label text="%settings.threshold.title" styleClass="title-4"/>
+                <HBox spacing="16.0" alignment="CENTER_LEFT">
+                    <Label text="%settings.threshold.min_size" styleClass="text-bold"/>
+                    <Spinner fx:id="minSizeSpinner" prefWidth="120.0" editable="true"/>
+                </HBox>
+                <Label text="%settings.threshold.sub" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <!-- Safety & Native Trash -->
+            <VBox spacing="10.0" styleClass="card" style="-fx-padding: 14 16;">
+                <Label text="%settings.safety.title" styleClass="title-4"/>
+                <CheckBox fx:id="preferTrashCheckBox" text="%settings.safety.recycle_bin" styleClass="text-bold"/>
+                <Label text="%settings.safety.sub" wrapText="true" styleClass="text-subtle"/>
+            </VBox>
+
+            <!-- Exclusion Paths -->
+            <VBox spacing="10.0" styleClass="card" style="-fx-padding: 14 16;">
+                <Label text="%settings.exclusions.title" styleClass="title-4"/>
+                <Label text="%settings.exclusions.sub" styleClass="text-subtle"/>
+
+                <ListView fx:id="excludedPathsListView" prefHeight="130.0" styleClass="dense"/>
+
+                <HBox spacing="10.0">
+                    <Button text="%settings.exclusions.add" onAction="#onAddExcludedPath" styleClass="button-outlined"/>
+                    <Button text="%settings.exclusions.remove" onAction="#onRemoveExcludedPath" styleClass="button-outlined"/>
+                </HBox>
+            </VBox>
+
+            <!-- Windows File Explorer Context Menu Integration -->
+            <VBox spacing="10.0" styleClass="card" style="-fx-padding: 14 16;">
+                <Label text="%settings.explorer.title" styleClass="title-4"/>
+                <CheckBox fx:id="explorerContextMenuCheckBox" text="%settings.explorer.checkbox" styleClass="text-bold"/>
+                <Label text="%settings.explorer.sub" wrapText="true" styleClass="text-subtle"/>
+            </VBox>
+
+            <!-- Privacy Guarantee Banner -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card" style="-fx-padding: 12 16;">
+                <Label text="🔒" style="-fx-font-size: 1.1em;"/>
+                <VBox spacing="2.0">
+                    <Label text="%settings.privacy.title" styleClass="text-bold"/>
+                    <Label text="%settings.privacy.sub" styleClass="text-small, text-subtle"/>
+                </VBox>
+            </HBox>
+
+        </VBox>
+    </content>
+</ScrollPane>

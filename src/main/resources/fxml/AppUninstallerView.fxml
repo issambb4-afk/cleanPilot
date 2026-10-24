@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.AppUninstallerViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+            <Label text="Deep App Uninstaller &amp; Leftover Cleaner" styleClass="title-2"/>
+            <Label text="Inspect installed Windows software, execute standard or silent uninstallers, and safely purge orphaned AppData leftovers."
+                   styleClass="text-subtle"/>
+        </VBox>
+        <Button fx:id="refreshBtn" text="🔄 Refresh Programs" onAction="#onRefresh" styleClass="button-outlined"/>
+    </HBox>
+
+    <!-- KPI Cards Grid -->
+    <GridPane hgap="12.0" vgap="12.0">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="33.34" hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="INSTALLED APPLICATIONS" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="totalAppsLabel" text="-" styleClass="title-3, text-bold, text-accent"/>
+            <Label text="Scanned from Windows 32/64-bit Registry" styleClass="text-small, text-subtle"/>
+        </VBox>
+
+        <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="TOTAL ESTIMATED FOOTPRINT" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="totalFootprintLabel" text="0 B" styleClass="title-3, text-bold"/>
+            <Label text="Disk space allocated to installed programs" styleClass="text-small, text-subtle"/>
+        </VBox>
+
+        <VBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="ORPHANED RESIDUAL LEFTOVERS" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="residualSizeLabel" text="0 B" styleClass="title-3, text-bold, text-warning"/>
+            <Label fx:id="residualCountLabel" text="0 leftover folders found" styleClass="text-small, text-subtle"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Source Segmented Tabs: Installed Apps vs Orphaned Residuals -->
+    <HBox spacing="8.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 12;">
+        <ToggleButton fx:id="installedAppsTabBtn" text="📦 Installed Applications" selected="true" styleClass="button-outlined"/>
+        <ToggleButton fx:id="residualsTabBtn" text="🧹 Orphaned AppData Leftovers" styleClass="button-outlined"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="searchField" promptText="🔍 Search application name or publisher..." prefWidth="280.0"/>
+    </HBox>
+
+    <!-- Stack for Switching Between Installed Apps Table and Residuals Table -->
+    <StackPane VBox.vgrow="ALWAYS">
+
+        <!-- Table 1: Installed Programs -->
+        <TableView fx:id="appsTable" styleClass="dense">
+            <columns>
+                <TableColumn fx:id="appNameCol" text="Application Name" minWidth="150.0" prefWidth="220.0"/>
+                <TableColumn fx:id="appPublisherCol" text="Publisher" minWidth="130.0" prefWidth="160.0"/>
+                <TableColumn fx:id="appVersionCol" text="Version" minWidth="80.0" prefWidth="95.0"/>
+                <TableColumn fx:id="appSizeCol" text="Size" minWidth="80.0" prefWidth="95.0"/>
+                <TableColumn fx:id="appArchCol" text="Arch" minWidth="60.0" prefWidth="70.0"/>
+                <TableColumn fx:id="appDateCol" text="Install Date" minWidth="90.0" prefWidth="105.0"/>
+                <TableColumn fx:id="appLocationCol" text="Directory" minWidth="180.0" prefWidth="280.0"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+            <placeholder>
+                <Label text="No installed programs detected or loading..." styleClass="text-subtle"/>
+            </placeholder>
+        </TableView>
+
+        <!-- Table 2: Orphaned Residuals -->
+        <TableView fx:id="residualsTable" visible="false" managed="false" styleClass="dense">
+            <columns>
+                <TableColumn fx:id="resSelectCol" text="" prefWidth="40.0" sortable="false" resizable="false"/>
+                <TableColumn fx:id="resFolderCol" text="Orphaned Folder Name" prefWidth="220.0"/>
+                <TableColumn fx:id="resAreaCol" text="Location / Origin" prefWidth="150.0"/>
+                <TableColumn fx:id="resSizeCol" text="Size" prefWidth="105.0"/>
+                <TableColumn fx:id="resPathCol" text="Full Folder Path" prefWidth="450.0"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN"/>
+            </columnResizePolicy>
+            <placeholder>
+                <Label text="Zero orphaned residual folders detected. Your system is clean!" styleClass="text-subtle"/>
+            </placeholder>
+        </TableView>
+
+    </StackPane>
+
+    <!-- Bottom Actions Toolbar -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 14;">
+        <HBox fx:id="appsActionBox" spacing="10.0" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+            <Label fx:id="selectedAppLabel" text="Select an application above to inspect or uninstall." styleClass="text-subtle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <CheckBox fx:id="quietUninstallCheckBox" text="Silent Mode (if supported)"/>
+            <Button fx:id="uninstallBtn" text="🚀 Launch Uninstaller" onAction="#onUninstallApp" disable="true" styleClass="accent"/>
+        </HBox>
+
+        <HBox fx:id="residualsActionBox" spacing="10.0" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" visible="false" managed="false">
+            <Button text="Select All" onAction="#onSelectAllResiduals" styleClass="button-outlined"/>
+            <Button text="Deselect All" onAction="#onDeselectAllResiduals" styleClass="button-outlined"/>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="residualSelectionLabel" text="Selected: 0 folders (0 B)" styleClass="text-bold"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="cleanResidualsBtn" text="🗑 Clean Selected Leftovers" onAction="#onCleanResiduals" disable="true" styleClass="danger">
+                <tooltip><Tooltip text="Preview targets and permanently remove orphaned leftover folders"/></tooltip>
+            </Button>
+        </HBox>
+    </HBox>
+
+</VBox>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.DuplicatesViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Top header & description -->
+    <VBox spacing="2.0">
+        <Label text="Duplicate File Hunter" styleClass="title-2"/>
+        <Label text="Safe multi-pass byte grouping and streaming SHA-256 hashing. Redundant copies are auto-selected while original files are strictly preserved."
+               styleClass="text-subtle"/>
+    </VBox>
+
+    <!-- Controls Panel -->
+    <VBox spacing="10.0" styleClass="card" style="-fx-padding: 12 16;">
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <Label text="Target Folder:" minWidth="90.0" styleClass="text-bold"/>
+            <TextField fx:id="targetPathField" HBox.hgrow="ALWAYS" promptText="Select a directory or drive to scan for duplicates..."/>
+            <Button text="Browse..." onAction="#onBrowseDirectory" styleClass="button-outlined"/>
+            <Button fx:id="scanBtn" text="🔍 Find Duplicates" onAction="#onStartScan" styleClass="accent"/>
+            <Button fx:id="cancelBtn" text="✖ Cancel" onAction="#onCancelScan" disable="true" styleClass="button-outlined"/>
+        </HBox>
+
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <Label text="Min File Size:" styleClass="text-subtle"/>
+            <ComboBox fx:id="minSizeComboBox" prefWidth="110.0"/>
+
+            <Label text="Sort By:" styleClass="text-subtle"/>
+            <ComboBox fx:id="sortByComboBox" prefWidth="200.0"/>
+
+            <Label text="Filter:" styleClass="text-subtle"/>
+            <TextField fx:id="searchField" promptText="Filter by file name, path, or hash..." HBox.hgrow="ALWAYS" minWidth="180.0"/>
+        </HBox>
+
+        <VBox spacing="3.0">
+            <ProgressBar fx:id="scanProgressBar" maxWidth="Infinity" visible="false"/>
+            <Label fx:id="scanStatusLabel" text="Ready to scan for duplicate files." styleClass="text-caption, text-subtle"/>
+        </VBox>
+    </VBox>
+
+    <!-- TreeTableView of Duplicate Groups -->
+    <TreeTableView fx:id="duplicatesTreeTable" VBox.vgrow="ALWAYS" styleClass="dense">
+        <columns>
+            <TreeTableColumn fx:id="selectCol" text="" prefWidth="40.0" minWidth="40.0" sortable="false" resizable="false"/>
+            <TreeTableColumn fx:id="nameCol" text="Item / Content SHA-256" minWidth="180.0" prefWidth="280.0"/>
+            <TreeTableColumn fx:id="sizeCol" text="Size" minWidth="80.0" prefWidth="105.0"/>
+            <TreeTableColumn fx:id="dateCol" text="Modified" minWidth="110.0" prefWidth="140.0"/>
+            <TreeTableColumn fx:id="pathCol" text="Location / Details" minWidth="200.0" prefWidth="400.0"/>
+        </columns>
+        <columnResizePolicy>
+            <TreeTableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="No duplicates found. Select a folder above and click 'Find Duplicates'." styleClass="text-subtle"/>
+        </placeholder>
+    </TreeTableView>
+
+    <!-- Bottom Actions Toolbar -->
+    <HBox spacing="8.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 14;">
+        <Label text="Auto-Select:" styleClass="text-subtle"/>
+        <Button text="Oldest" minWidth="-Infinity" onAction="#onSelectKeepOldest" styleClass="button-outlined">
+            <tooltip><Tooltip text="Keep original oldest file and mark redundant newer copies for removal"/></tooltip>
+        </Button>
+        <Button text="Newest" minWidth="-Infinity" onAction="#onSelectKeepNewest" styleClass="button-outlined">
+            <tooltip><Tooltip text="Keep newest file copy and mark older duplicates for removal"/></tooltip>
+        </Button>
+        <Button text="Shortest Path" minWidth="-Infinity" onAction="#onSelectKeepShortestPath" styleClass="button-outlined">
+            <tooltip><Tooltip text="Keep shallowest path copy and mark deeply nested copies for removal"/></tooltip>
+        </Button>
+        <Button text="Clear" minWidth="-Infinity" onAction="#onDeselectAll" styleClass="button-outlined"/>
+        <Separator orientation="VERTICAL"/>
+        <Label fx:id="reclaimableSummaryLabel" text="Selected: 0 files (0 B)" styleClass="text-bold"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="cleanDuplicatesBtn" text="🗑 Clean Selected" minWidth="-Infinity" onAction="#onCleanDuplicates"
+                disable="true" styleClass="danger">
+            <tooltip><Tooltip text="Preview targets and safely remove redundant copies"/></tooltip>
+        </Button>
+    </HBox>
+
+</VBox>

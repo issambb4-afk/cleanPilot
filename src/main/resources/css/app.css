@@ -1,0 +1,715 @@
+/* ==========================================================================
+   CleanPilot - Desktop Design System & Theme Stylesheet
+   Complementing AtlantaFX (Primer Light & Primer Dark)
+   Aesthetic: Calm, confident, precision productivity hub.
+   ========================================================================== */
+
+/* --- 1. Global Typography & Core System Settings --- */
+.app-root {
+    -fx-font-family: "Segoe UI Variable Text", "Segoe UI", "Tahoma", "Cairo", "Arial", -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, "Helvetica Neue", sans-serif;
+    -fx-font-smoothing-type: lcd;
+    -fx-background-color: -color-bg-default;
+}
+
+.language-select-box {
+    -fx-background-color: -color-bg-default;
+    -fx-background-radius: 6px;
+    -fx-border-color: -color-border-subtle;
+    -fx-border-radius: 6px;
+    -fx-font-size: 0.84em;
+    -fx-cursor: hand;
+}
+
+.language-select-box:hover {
+    -fx-background-color: -color-neutral-subtle;
+    -fx-border-color: -color-border-default;
+}
+
+/* --- 2. Title Bar & Application Header --- */
+.top-container {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: transparent transparent -color-border-subtle transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.menu-bar {
+    -fx-background-color: transparent;
+    -fx-padding: 2 10;
+    -fx-border-width: 0;
+}
+
+.menu-bar .menu-button:hover,
+.menu-bar .menu-button:focused {
+    -fx-background-color: -color-neutral-subtle;
+}
+
+.app-header {
+    -fx-background-color: -color-bg-subtle;
+    -fx-padding: 8 16 8 20;
+}
+
+.brand-logo-badge {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 8px;
+    -fx-min-width: 32px;
+    -fx-max-width: 32px;
+    -fx-min-height: 32px;
+    -fx-max-height: 32px;
+    -fx-effect: dropshadow(three-pass-box, rgba(37, 99, 235, 0.30), 6, 0, 0, 1);
+}
+
+.brand-logo-icon {
+    -fx-text-fill: white;
+    -fx-font-size: 1.15em;
+    -fx-font-weight: bold;
+}
+
+.app-title {
+    -fx-font-size: 1.35em;
+    -fx-font-weight: 800;
+    -fx-text-fill: -color-fg-default;
+}
+
+.app-subtitle {
+    -fx-font-size: 0.82em;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.badge-privacy {
+    -fx-background-color: rgba(16, 185, 129, 0.12);
+    -fx-text-fill: #10b981;
+    -fx-border-color: rgba(16, 185, 129, 0.28);
+    -fx-border-radius: 999px;
+    -fx-background-radius: 999px;
+    -fx-padding: 3 12;
+    -fx-font-size: 0.78em;
+    -fx-font-weight: 700;
+}
+
+.theme-toggle-btn {
+    -fx-background-color: -color-bg-default;
+    -fx-background-radius: 6px;
+    -fx-border-color: -color-border-subtle;
+    -fx-border-radius: 6px;
+    -fx-padding: 5 12;
+    -fx-font-size: 0.84em;
+    -fx-cursor: hand;
+}
+
+.theme-toggle-btn:hover {
+    -fx-background-color: -color-neutral-subtle;
+    -fx-border-color: -color-border-default;
+}
+
+/* --- 3. Navigation Rail (Sidebar - CCleaner Slate Navy Aesthetic & Windows 11 Fluent) --- */
+.nav-scroll {
+    -fx-background-color: #171f2c;
+    -fx-background: #171f2c;
+    -fx-border-color: transparent #222d3d transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 0;
+    -fx-fit-to-width: true;
+}
+
+.nav-scroll > .viewport {
+    -fx-background-color: #171f2c;
+}
+
+.nav-rail {
+    -fx-background-color: #171f2c;
+    -fx-padding: 14 10 18 10;
+}
+
+.nav-section-header {
+    -fx-font-size: 0.68em;
+    -fx-font-weight: 800;
+    -fx-text-fill: #64748b;
+    -fx-padding: 12 10 4 10;
+    -fx-opacity: 0.90;
+    -fx-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Roboto, sans-serif;
+}
+
+.nav-button {
+    -fx-font-size: 0.88em;
+    -fx-font-weight: 500;
+    -fx-padding: 5 10 5 8;
+    -fx-background-radius: 8px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #94a3b8;
+    -fx-alignment: BASELINE_LEFT;
+    -fx-graphic-text-gap: 10px;
+    -fx-cursor: hand;
+}
+
+.nav-icon-box {
+    -fx-min-width: 28px;
+    -fx-max-width: 28px;
+    -fx-min-height: 28px;
+    -fx-max-height: 28px;
+    -fx-background-radius: 6px;
+    -fx-background-color: rgba(255, 255, 255, 0.04);
+    -fx-alignment: CENTER;
+}
+
+.nav-icon {
+    -fx-icon-color: #94a3b8;
+    -fx-icon-size: 15px;
+}
+
+.nav-button:hover {
+    -fx-background-color: #222c3d;
+    -fx-text-fill: #ffffff;
+}
+
+.nav-button:hover .nav-icon-box {
+    -fx-background-color: rgba(56, 189, 248, 0.14);
+}
+
+.nav-button:hover .nav-icon {
+    -fx-icon-color: #38bdf8;
+}
+
+.nav-button.accent {
+    -fx-background-color: #1f2b3e;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 700;
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent transparent transparent #388bfd;
+    -fx-border-width: 0 0 0 3px;
+    -fx-border-radius: 8px;
+}
+
+.nav-button.accent .nav-icon-box {
+    -fx-background-color: rgba(37, 99, 235, 0.22);
+    -fx-border-color: rgba(56, 189, 248, 0.35);
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+}
+
+.nav-button.accent .nav-icon {
+    -fx-icon-color: #60a5fa;
+}
+
+.sidebar-footer {
+    -fx-padding: 14 10 6 10;
+    -fx-border-color: #232d3d transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.badge-pill-accent {
+    -fx-background-color: rgba(37, 99, 235, 0.14);
+    -fx-text-fill: #2563eb;
+    -fx-background-radius: 999px;
+    -fx-padding: 1 7;
+    -fx-font-size: 0.72em;
+    -fx-font-weight: 700;
+}
+
+/* --- 5. Main Content Area & Cards --- */
+.content-area {
+    -fx-background-color: -color-bg-default;
+}
+
+.dashboard-scroll,
+.content-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-fit-to-width: true;
+}
+
+.card {
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 8px;
+    -fx-border-color: -color-border-subtle;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.card:hover {
+    -fx-border-color: -color-border-default;
+}
+
+.card-hero {
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(37, 99, 235, 0.35);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.kpi-card {
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 12 16;
+}
+
+.action-card {
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+/* --- 6. Typography Helpers --- */
+.text-caption {
+    -fx-font-size: 0.72em;
+    -fx-font-weight: 700;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.text-small {
+    -fx-font-size: 0.82em;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.text-subtle {
+    -fx-text-fill: -color-fg-muted;
+}
+
+.text-bold {
+    -fx-font-weight: 700;
+}
+
+.title-1 {
+    -fx-font-size: 1.65em;
+    -fx-font-weight: 800;
+    -fx-text-fill: -color-fg-default;
+}
+
+.title-2 {
+    -fx-font-size: 1.30em;
+    -fx-font-weight: 700;
+    -fx-text-fill: -color-fg-default;
+}
+
+.title-3 {
+    -fx-font-size: 1.10em;
+    -fx-font-weight: 700;
+    -fx-text-fill: -color-fg-default;
+}
+
+.title-4 {
+    -fx-font-size: 0.95em;
+    -fx-font-weight: 700;
+    -fx-text-fill: -color-fg-default;
+}
+
+.text-success {
+    -fx-text-fill: -color-success-emphasis;
+}
+
+.text-warning {
+    -fx-text-fill: -color-warning-emphasis;
+}
+
+.text-danger {
+    -fx-text-fill: -color-danger-emphasis;
+}
+
+.text-accent {
+    -fx-text-fill: -color-accent-emphasis;
+}
+
+/* --- 7. Badges & Chips --- */
+.badge {
+    -fx-background-radius: 999px;
+    -fx-padding: 3 10;
+    -fx-font-size: 0.76em;
+    -fx-font-weight: 700;
+}
+
+.badge-subtle {
+    -fx-background-color: -color-neutral-subtle;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.badge-success {
+    -fx-background-color: rgba(22, 163, 74, 0.14);
+    -fx-text-fill: -color-success-emphasis;
+}
+
+.badge-warning {
+    -fx-background-color: rgba(217, 119, 6, 0.14);
+    -fx-text-fill: -color-warning-emphasis;
+}
+
+.badge-danger {
+    -fx-background-color: rgba(220, 38, 38, 0.14);
+    -fx-text-fill: -color-danger-emphasis;
+}
+
+.badge-critical {
+    -fx-background-color: rgba(185, 28, 28, 0.20);
+    -fx-text-fill: #b91c1c;
+    -fx-font-weight: 800;
+}
+
+.badge-info {
+    -fx-background-color: rgba(2, 132, 199, 0.14);
+    -fx-text-fill: -color-accent-emphasis;
+}
+
+/* --- 8. Modern Tables & Trees --- */
+.table-view,
+.tree-table-view {
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 6px;
+    -fx-border-color: -color-border-subtle;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+}
+
+.table-view .column-header,
+.tree-table-view .column-header {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: transparent transparent -color-border-subtle transparent;
+    -fx-font-size: 0.84em;
+    -fx-font-weight: 700;
+    -fx-padding: 7 10;
+}
+
+.table-view .table-row-cell,
+.tree-table-view .tree-table-row-cell {
+    -fx-border-color: transparent transparent -color-border-subtle transparent;
+    -fx-border-width: 0 0 0.5 0;
+    -fx-padding: 2 0;
+}
+
+.table-view .table-row-cell:hover,
+.tree-table-view .tree-table-row-cell:hover {
+    -fx-background-color: -color-neutral-subtle;
+}
+
+.table-view .table-row-cell:selected,
+.tree-table-view .tree-table-row-cell:selected {
+    -fx-background-color: -color-accent-subtle;
+}
+
+/* --- 9. Inputs, TextFields & Buttons --- */
+.text-field {
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-padding: 6 12;
+    -fx-font-size: 0.88em;
+}
+
+.text-field:focused {
+    -fx-border-color: #2563eb;
+    -fx-border-width: 1.5px;
+}
+
+.button.accent {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-background-radius: 6px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-padding: 6 16;
+}
+
+.button.accent:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+.button.button-outlined {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-border-color: -color-border-default;
+    -fx-cursor: hand;
+    -fx-padding: 6 14;
+    -fx-font-size: 0.88em;
+    -fx-text-fill: -color-fg-default;
+}
+
+.button.button-outlined:hover {
+    -fx-background-color: -color-neutral-subtle;
+    -fx-border-color: -color-border-default;
+}
+
+.button.danger,
+.button.button-danger {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+    -fx-background-radius: 6px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-padding: 6 16;
+}
+
+.button.danger:hover,
+.button.button-danger:hover {
+    -fx-background-color: #b91c1c;
+}
+
+/* Accessibility Focus Indicator */
+.button:focused,
+.text-field:focused,
+.combo-box:focused {
+    -fx-border-color: #2563eb;
+    -fx-border-width: 1.5px;
+}
+
+/* --- 10. Modern Progress Bars --- */
+.progress-bar {
+    -fx-min-height: 6px;
+    -fx-pref-height: 6px;
+    -fx-max-height: 6px;
+}
+
+.progress-bar .track {
+    -fx-background-color: -color-neutral-muted;
+    -fx-background-radius: 999px;
+}
+
+.progress-bar .bar {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 999px;
+}
+
+.progress-bar.success .bar {
+    -fx-background-color: -color-success-emphasis;
+}
+
+.progress-bar.warning .bar {
+    -fx-background-color: -color-warning-emphasis;
+}
+
+.progress-bar.danger .bar {
+    -fx-background-color: -color-danger-emphasis;
+}
+
+/* --- 11. Minimalist Sleek Scrollbars --- */
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-height: 8px;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -color-neutral-muted;
+    -fx-background-radius: 999px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -color-fg-muted;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-pref-height: 0px;
+    -fx-pref-width: 0px;
+    -fx-padding: 0;
+}
+
+/* ==========================================================================
+   12. CCleaner-Style Health Check & Advanced Modern Components
+   ========================================================================== */
+
+/* --- Pill Action Buttons --- */
+.btn-pill {
+    -fx-background-radius: 999px;
+    -fx-padding: 10 28;
+    -fx-font-size: 1.05em;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+}
+
+.btn-pill-primary {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(37, 99, 235, 0.35), 8, 0, 0, 2);
+}
+
+.btn-pill-primary:hover {
+    -fx-background-color: #1d4ed8;
+    -fx-effect: dropshadow(three-pass-box, rgba(37, 99, 235, 0.45), 10, 0, 0, 3);
+}
+
+.btn-pill-success {
+    -fx-background-color: #10b981;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(16, 185, 129, 0.35), 8, 0, 0, 2);
+}
+
+.btn-pill-success:hover {
+    -fx-background-color: #059669;
+    -fx-effect: dropshadow(three-pass-box, rgba(16, 185, 129, 0.45), 10, 0, 0, 3);
+}
+
+.btn-pill-outlined {
+    -fx-background-color: transparent;
+    -fx-background-radius: 999px;
+    -fx-border-color: -color-border-default;
+    -fx-border-radius: 999px;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: -color-fg-default;
+}
+
+.btn-pill-outlined:hover {
+    -fx-background-color: -color-neutral-subtle;
+    -fx-border-color: #2563eb;
+    -fx-text-fill: #2563eb;
+}
+
+/* --- CCleaner Step Tracker Bar --- */
+.step-tracker-bar {
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 12px;
+    -fx-border-color: -color-border-subtle;
+    -fx-border-radius: 12px;
+    -fx-padding: 12 16;
+}
+
+.step-tracker-node {
+    -fx-alignment: CENTER;
+    -fx-spacing: 6px;
+}
+
+.step-tracker-circle {
+    -fx-background-color: -color-neutral-muted;
+    -fx-background-radius: 999px;
+    -fx-min-width: 28px;
+    -fx-max-width: 28px;
+    -fx-min-height: 28px;
+    -fx-max-height: 28px;
+    -fx-alignment: CENTER;
+}
+
+.step-tracker-circle-text {
+    -fx-font-size: 0.85em;
+    -fx-font-weight: 800;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.step-tracker-circle.active {
+    -fx-background-color: #2563eb;
+    -fx-effect: dropshadow(three-pass-box, rgba(37, 99, 235, 0.40), 6, 0, 0, 1);
+}
+
+.step-tracker-circle.active .step-tracker-circle-text {
+    -fx-text-fill: white;
+}
+
+.step-tracker-circle.completed {
+    -fx-background-color: #10b981;
+    -fx-effect: dropshadow(three-pass-box, rgba(16, 185, 129, 0.35), 6, 0, 0, 1);
+}
+
+.step-tracker-circle.completed .step-tracker-circle-text {
+    -fx-text-fill: white;
+}
+
+.step-tracker-label {
+    -fx-font-size: 0.82em;
+    -fx-font-weight: 600;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.step-tracker-label.active {
+    -fx-text-fill: -color-fg-default;
+    -fx-font-weight: 700;
+}
+
+.step-tracker-line {
+    -fx-background-color: -color-border-subtle;
+    -fx-min-height: 2px;
+    -fx-pref-height: 2px;
+    -fx-max-height: 2px;
+}
+
+.step-tracker-line.active {
+    -fx-background-color: #2563eb;
+}
+
+/* --- CCleaner Hero Centerpiece --- */
+.hero-centerpiece {
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 14px;
+    -fx-border-color: -color-border-subtle;
+    -fx-border-radius: 14px;
+    -fx-padding: 24 20 28 20;
+    -fx-alignment: CENTER;
+}
+
+.hero-status-title {
+    -fx-font-size: 1.50em;
+    -fx-font-weight: 800;
+    -fx-text-fill: -color-fg-default;
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
+}
+
+.hero-status-sub {
+    -fx-font-size: 0.94em;
+    -fx-text-fill: -color-fg-muted;
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
+    -fx-max-width: 650px;
+}
+
+/* --- CCleaner 4 Category Health Cards --- */
+.health-card {
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 10px;
+    -fx-border-color: -color-border-subtle;
+    -fx-border-radius: 10px;
+    -fx-padding: 14 16;
+    -fx-cursor: hand;
+}
+
+.health-card:hover {
+    -fx-border-color: rgba(37, 99, 235, 0.40);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 8, 0, 0, 2);
+}
+
+.health-card-icon-badge {
+    -fx-background-radius: 8px;
+    -fx-min-width: 38px;
+    -fx-max-width: 38px;
+    -fx-min-height: 38px;
+    -fx-max-height: 38px;
+    -fx-alignment: CENTER;
+}
+
+.health-card-title {
+    -fx-font-size: 0.96em;
+    -fx-font-weight: 700;
+    -fx-text-fill: -color-fg-default;
+}
+
+.health-card-value {
+    -fx-font-size: 1.25em;
+    -fx-font-weight: 800;
+    -fx-text-fill: -color-fg-default;
+}
+
+.health-card-sub {
+    -fx-font-size: 0.80em;
+    -fx-text-fill: -color-fg-muted;
+}
+
+/* --- Section Toggles & Tab Buttons --- */
+.view-mode-pill {
+    -fx-background-color: -color-neutral-subtle;
+    -fx-background-radius: 999px;
+    -fx-padding: 3 14;
+    -fx-font-size: 0.82em;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.view-mode-pill.active {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+}
+

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.HistoryViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="16.0">
+        <VBox spacing="2.0">
+            <Label text="Scan &amp; Audit History" styleClass="title-2"/>
+            <Label text="Local database records of past maintenance operations, identified space, and safely deleted files."
+                   styleClass="text-subtle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="🔄 Refresh" onAction="#loadHistory" styleClass="button-outlined"/>
+        <Button text="🗑 Clear History" onAction="#onClearHistory" styleClass="button-outlined"/>
+    </HBox>
+
+    <!-- Summary KPI cards -->
+    <GridPane hgap="12.0" vgap="12.0">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="33.34" hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="TOTAL SPACE RECOVERED" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="totalRecoveredLabel" text="0 B" styleClass="title-3, text-bold, text-success"/>
+            <Label text="Audited across completed cleanup tasks" styleClass="text-small, text-subtle"/>
+        </VBox>
+
+        <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="TOTAL FILES REMOVED" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="totalItemsLabel" text="0" styleClass="title-3, text-bold, text-accent"/>
+            <Label text="Items removed with zero reparse-point escapes" styleClass="text-small, text-subtle"/>
+        </VBox>
+
+        <VBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+            <Label text="RECORDED RUNS" styleClass="text-caption, text-subtle"/>
+            <Label fx:id="totalScansLabel" text="0" styleClass="title-3, text-bold"/>
+            <Label text="Durable journal records in SQLite" styleClass="text-small, text-subtle"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Controls Panel -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 12;">
+        <Label text="Operation:" styleClass="text-subtle"/>
+        <ComboBox fx:id="typeFilterComboBox" prefWidth="160.0" promptText="All Operations"/>
+
+        <Label text="Sort By:" styleClass="text-subtle"/>
+        <ComboBox fx:id="sortByComboBox" prefWidth="180.0"/>
+
+        <Label text="Filter:" styleClass="text-subtle"/>
+        <TextField fx:id="searchField" promptText="Filter by target folder or status..." HBox.hgrow="ALWAYS" minWidth="200.0"/>
+    </HBox>
+
+    <!-- History Table -->
+    <TableView fx:id="historyTable" VBox.vgrow="ALWAYS" styleClass="dense">
+        <columns>
+            <TableColumn fx:id="dateCol" text="Timestamp" minWidth="130.0" prefWidth="150.0"/>
+            <TableColumn fx:id="typeCol" text="Operation" minWidth="100.0" prefWidth="120.0"/>
+            <TableColumn fx:id="targetCol" text="Target Directory" minWidth="180.0" prefWidth="300.0"/>
+            <TableColumn fx:id="identifiedCol" text="Items" minWidth="85.0" prefWidth="110.0"/>
+            <TableColumn fx:id="recoveredCol" text="Space Recovered" minWidth="110.0" prefWidth="125.0"/>
+            <TableColumn fx:id="durationCol" text="Duration" minWidth="80.0" prefWidth="95.0"/>
+            <TableColumn fx:id="statusCol" text="Status" minWidth="85.0" prefWidth="100.0"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="No scan or cleanup history recorded yet." styleClass="text-subtle"/>
+        </placeholder>
+    </TableView>
+
+</VBox>

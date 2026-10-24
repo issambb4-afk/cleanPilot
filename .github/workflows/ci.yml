@@ -1,0 +1,51 @@
+name: CleanPilot CI & Packaging
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    name: Build, Test & Package (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+
+      - name: Run Automated Test Suite
+        run: .\gradlew.bat test --info
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/reports/tests/test/
+
+      - name: Build Runnable Fat JAR (bootJar)
+        run: .\gradlew.bat bootJar
+
+      - name: Package Standalone Portable App-Image
+        run: .\gradlew.bat packageAppImage
+
+      - name: Generate Package Manager Distribution Manifests
+        run: .\gradlew.bat generateDistributionManifests
+
+      - name: Upload Distribution Manifests
+        uses: actions/upload-artifact@v4
+        with:
+          name: distribution-manifests
+          path: distribution/

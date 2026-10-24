@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.RecuperateController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Header Section with Summary Cards -->
+    <VBox spacing="10.0">
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                <Label text="Recuperate &amp; Trash Manager" styleClass="title-2"/>
+                <Label text="Two-tier recovery: restore files from the CleanPilot Quarantine Vault or discover items in the OS Recycle Bin."
+                       styleClass="text-subtle"/>
+            </VBox>
+            <Button fx:id="openSystemTrashBtn" text="🗂 Open System Recycle Bin" onAction="#onOpenSystemTrash" styleClass="button-outlined"/>
+            <Button fx:id="refreshBtn" text="🔄 Refresh" onAction="#onRefresh" styleClass="button-outlined"/>
+        </HBox>
+
+        <!-- KPI Cards Grid -->
+        <GridPane hgap="12.0" vgap="12.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                <ColumnConstraints percentWidth="33.34" hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="APP QUARANTINE VAULT" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="quarantineCountLabel" text="-" styleClass="title-3, text-bold, text-accent"/>
+                <Label fx:id="quarantineSizeLabel" text="0 B held in staging vault" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="NATIVE OS RECYCLE BIN" styleClass="text-caption, text-subtle"/>
+                <Label fx:id="systemTrashCountLabel" text="-" styleClass="title-3, text-bold"/>
+                <Label text="Historical deletions across system drives" styleClass="text-small, text-subtle"/>
+            </VBox>
+
+            <VBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="card, kpi-card" style="-fx-padding: 10 14;">
+                <Label text="AUTO-PURGE RETENTION" styleClass="text-caption, text-subtle"/>
+                <Label text="30 Days Retention" styleClass="title-3, text-bold, text-success"/>
+                <Label text="Auto-purges expired items safely" styleClass="text-small, text-subtle"/>
+            </VBox>
+        </GridPane>
+    </VBox>
+
+    <!-- Source Segmented Tabs -->
+    <HBox spacing="8.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 12;">
+        <ToggleButton fx:id="quarantineTabBtn" text="📦 Quarantine Vault" selected="true" styleClass="button-outlined"/>
+        <ToggleButton fx:id="systemTrashTabBtn" text="🗑 System Recycle Bin" styleClass="button-outlined"/>
+        <ToggleButton fx:id="deepRecoveryTabBtn" text="🔎 Deep Recovery Search" styleClass="button-outlined"/>
+        <Button fx:id="runDeepScanBtn" text="⚡ Run Deep Scan" onAction="#onRunDeepScan" styleClass="accent"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="searchField" promptText="🔍 Search file name or path..." prefWidth="250.0"/>
+    </HBox>
+
+    <!-- Virtualized Recovery Table -->
+    <TableView fx:id="recoveryTable" VBox.vgrow="ALWAYS" styleClass="dense">
+        <columns>
+            <TableColumn fx:id="selectCol" text="" prefWidth="40.0" minWidth="40.0" sortable="false" resizable="false"/>
+            <TableColumn fx:id="nameCol" text="File Name" minWidth="150.0" prefWidth="220.0"/>
+            <TableColumn fx:id="originalPathCol" text="Original Path" minWidth="200.0" prefWidth="350.0"/>
+            <TableColumn fx:id="sizeCol" text="Size" minWidth="80.0" prefWidth="105.0"/>
+            <TableColumn fx:id="deletedDateCol" text="Deletion Date" minWidth="110.0" prefWidth="130.0"/>
+            <TableColumn fx:id="retentionCol" text="Retention / Status" minWidth="105.0" prefWidth="125.0"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="No recoverable files found in this category." styleClass="text-subtle"/>
+        </placeholder>
+    </TableView>
+
+    <!-- Bottom Actions Toolbar -->
+    <HBox spacing="8.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 14;">
+        <Button text="Select All" minWidth="-Infinity" onAction="#onSelectAll" styleClass="button-outlined"/>
+        <Button text="Deselect All" minWidth="-Infinity" onAction="#onDeselectAll" styleClass="button-outlined"/>
+        <Separator orientation="VERTICAL"/>
+        <Label fx:id="selectionSummaryLabel" text="Selected: 0 files (0 B)" styleClass="text-bold"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="restoreSelectedBtn" text="↩ Restore" minWidth="-Infinity" onAction="#onRestoreSelected"
+                disable="true" styleClass="accent">
+            <tooltip><Tooltip text="Restore selected file to its original filesystem path"/></tooltip>
+        </Button>
+        <Button fx:id="recoverToFolderBtn" text="💾 Extract To..." minWidth="-Infinity" onAction="#onRecoverToFolder"
+                disable="true" styleClass="button-outlined">
+            <tooltip><Tooltip text="Extract selected files to a custom folder"/></tooltip>
+        </Button>
+        <Button fx:id="purgeExpiredBtn" text="⏰ Purge Expired" minWidth="-Infinity" onAction="#onPurgeExpired" styleClass="button-outlined">
+            <tooltip><Tooltip text="Purge items older than retention threshold (30 days)"/></tooltip>
+        </Button>
+        <Button fx:id="permanentDeleteBtn" text="🗑 Delete Forever" minWidth="-Infinity" onAction="#onPermanentlyDeleteSelected"
+                disable="true" styleClass="danger">
+            <tooltip><Tooltip text="Permanently delete selected files"/></tooltip>
+        </Button>
+    </HBox>
+
+</VBox>

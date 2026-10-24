@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cleanpilot.controller.ProcessMonitorViewController"
+      spacing="14.0" VBox.vgrow="ALWAYS">
+
+    <!-- Top header & description -->
+    <HBox alignment="CENTER_LEFT" spacing="16.0">
+        <VBox spacing="2.0">
+            <Label text="Resource &amp; Process Monitor" styleClass="title-2"/>
+            <Label text="Inspect active processes, rolling CPU/RAM utilization, and identify potential system blockers."
+                   styleClass="text-subtle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="statusLabel" text="Monitoring system processes..." styleClass="badge, badge-subtle"/>
+    </HBox>
+
+    <!-- Real-Time Rolling Performance Sparklines (60s history) -->
+    <GridPane hgap="14.0" vgap="14.0">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="card" style="-fx-padding: 10 14;">
+            <HBox alignment="CENTER_LEFT">
+                <Label text="REAL-TIME TOTAL CPU USAGE (60s)" styleClass="text-caption, text-subtle"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="cpuLiveValueLabel" text="0.0%" styleClass="text-bold, text-accent"/>
+            </HBox>
+            <StackPane fx:id="cpuSparklineContainer" prefHeight="55.0" minHeight="45.0" maxHeight="70.0"/>
+        </VBox>
+
+        <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="card" style="-fx-padding: 10 14;">
+            <HBox alignment="CENTER_LEFT">
+                <Label text="REAL-TIME PHYSICAL RAM USAGE (60s)" styleClass="text-caption, text-subtle"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="ramLiveValueLabel" text="0.0%" styleClass="text-bold, text-success"/>
+            </HBox>
+            <StackPane fx:id="ramSparklineContainer" prefHeight="55.0" minHeight="45.0" maxHeight="70.0"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Controls Panel -->
+    <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 10 14;">
+        <TextField fx:id="searchField" promptText="🔍 Filter by process name, PID, or user..." HBox.hgrow="ALWAYS" minWidth="200.0"/>
+        <ComboBox fx:id="sortByComboBox" prefWidth="170.0" promptText="Sort By"/>
+        <CheckBox fx:id="filterHogsCheckBox" text="Blockers Only" styleClass="text-bold">
+            <tooltip><Tooltip text="Filter to only high-impact processes consuming significant CPU or RAM"/></tooltip>
+        </CheckBox>
+        <Separator orientation="VERTICAL"/>
+        <CheckBox fx:id="autoRefreshCheckBox" text="Auto-Refresh (3s)" selected="false"/>
+        <Button text="🔄 Refresh" onAction="#refreshProcesses" styleClass="button-outlined"/>
+    </HBox>
+
+    <!-- Process Table -->
+    <TableView fx:id="processTable" VBox.vgrow="ALWAYS" styleClass="dense">
+        <columns>
+            <TableColumn fx:id="pidCol" text="PID" minWidth="65.0" prefWidth="75.0"/>
+            <TableColumn fx:id="nameCol" text="Process Name" minWidth="160.0" prefWidth="220.0"/>
+            <TableColumn fx:id="cpuCol" text="CPU %" minWidth="70.0" prefWidth="85.0"/>
+            <TableColumn fx:id="ramCol" text="RAM (RSS)" minWidth="90.0" prefWidth="115.0"/>
+            <TableColumn fx:id="ioCol" text="Disk I/O" minWidth="85.0" prefWidth="105.0"/>
+            <TableColumn fx:id="impactCol" text="System Impact" minWidth="105.0" prefWidth="125.0"/>
+            <TableColumn fx:id="stateCol" text="State" minWidth="75.0" prefWidth="85.0"/>
+            <TableColumn fx:id="userCol" text="User / Owner" minWidth="100.0" prefWidth="120.0"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="No processes match the current search or filter criteria." styleClass="text-subtle"/>
+        </placeholder>
+    </TableView>
+
+    <!-- Bottom Actions Toolbar -->
+    <HBox spacing="12.0" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8 14;">
+        <Label fx:id="processCountLabel" text="Showing: 0 processes" styleClass="text-bold"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="inspectProcessBtn" text="🔍 Inspect Details" minWidth="-Infinity" onAction="#onInspectProcess"
+                disable="true" styleClass="button-outlined"/>
+        <Button fx:id="endProcessBtn" text="🛑 End Process" minWidth="-Infinity" onAction="#onEndProcess"
+                disable="true" styleClass="danger"/>
+    </HBox>
+
+</VBox>
