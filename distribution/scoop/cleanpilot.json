@@ -6,8 +6,8 @@
   "notes": "CleanPilot runs 100% offline with zero network telemetry.",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/cleanpilot/cleanpilot/releases/download/v1.0.0/CleanPilot-1.0.0-windows-x64-portable.zip",
-      "hash": "6993D2185F551D7BFD112786EF80D1F11DCC9B37936D033E453B15F01433AE9D",
+      "url": "https://github.com/issambb4-afk/cleanPilot/releases/download/v1.0.0/CleanPilot-1.0.0-windows-x64-portable.zip",
+      "hash": "CBF7B29928D8DB31F295116597E21D88376DC03C0914A613675E640B136B8808",
       "extract_dir": "CleanPilot"
     }
   },
