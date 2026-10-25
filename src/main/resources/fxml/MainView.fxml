@@ -54,6 +54,9 @@
                     <Label fx:id="appSubtitleLabel" text="Precision System Diagnostics &amp; Maintenance Hub" styleClass="app-subtitle"/>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="proHeaderBadge" text="👑 PRO" style="-fx-background-color: #f59e0b; -fx-text-fill: #1e1b4b; -fx-font-weight: 800; -fx-padding: 3 9; -fx-background-radius: 12px; -fx-font-size: 0.85em;" visible="false" managed="false">
+                    <tooltip><Tooltip text="CleanPilot Pro — Full commercial features unlocked"/></tooltip>
+                </Label>
                 <Label fx:id="privacyBadgeLabel" text="●  Zero Telemetry • 100% Offline" styleClass="badge-privacy">
                     <tooltip><Tooltip text="CleanPilot executes strictly locally. No telemetry endpoints or diagnostic reports are uploaded."/></tooltip>
                 </Label>
@@ -221,13 +224,14 @@
 
                 <Region VBox.vgrow="ALWAYS" minHeight="16.0"/>
 
-                <VBox spacing="4.0" styleClass="sidebar-footer">
+                <VBox spacing="6.0" styleClass="sidebar-footer">
                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                         <Label text="●" style="-fx-font-size: 0.9em; -fx-text-fill: #10b981;"/>
                         <Label text="CleanPilot Desktop" style="-fx-text-fill: #e2e8f0; -fx-font-weight: 700; -fx-font-size: 0.82em;"/>
-                        <Label text="v1.0" styleClass="badge-pill-accent"/>
+                        <Label fx:id="tierBadgeLabel" text="FREE" styleClass="badge-pill-accent"/>
                     </HBox>
                     <Label fx:id="footerPrivacyLabel" text="100% Offline • Zero Telemetry" style="-fx-text-fill: #64748b; -fx-font-size: 0.72em;"/>
+                    <Button fx:id="upgradeProSidebarBtn" text="⭐ Upgrade to Pro" onAction="#showSettings" styleClass="button-outlined" style="-fx-font-size: 0.78em; -fx-padding: 4 10; -fx-border-color: #f59e0b; -fx-text-fill: #fbbf24; -fx-cursor: hand;"/>
                 </VBox>
             </VBox>
         </ScrollPane>

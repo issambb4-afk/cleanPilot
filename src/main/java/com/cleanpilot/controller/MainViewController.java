@@ -36,6 +36,9 @@ public class MainViewController implements Initializable {
     @FXML private ComboBox<String> languageComboBox;
     @FXML private Label appSubtitleLabel;
     @FXML private Label privacyBadgeLabel;
+    @FXML private Label proHeaderBadge;
+    @FXML private Label tierBadgeLabel;
+    @FXML private Button upgradeProSidebarBtn;
 
     @FXML private Label sectionMainLabel;
     @FXML private Label sectionPerfLabel;
@@ -75,6 +78,7 @@ public class MainViewController implements Initializable {
     private final SpringFXMLLoader fxmlLoader;
     private final ThemeManager themeManager;
     private final LocalizationService localizationService;
+    private final com.cleanpilot.service.LicenseService licenseService;
     private final Map<String, Parent> viewCache = new HashMap<>();
 
     private String currentFxmlPath = "/fxml/DashboardView.fxml";
@@ -84,19 +88,43 @@ public class MainViewController implements Initializable {
     public MainViewController(
             SpringFXMLLoader fxmlLoader,
             ThemeManager themeManager,
-            LocalizationService localizationService
+            LocalizationService localizationService,
+            com.cleanpilot.service.LicenseService licenseService
     ) {
         this.fxmlLoader = fxmlLoader;
         this.themeManager = themeManager;
         this.localizationService = localizationService;
+        this.licenseService = licenseService;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupLanguageSelector();
+        updateLicenseIndicators();
         localizationService.addLanguageChangeListener(locale -> Platform.runLater(this::onLocaleChanged));
         applyLocalization();
         showDashboard();
+    }
+
+    private void updateLicenseIndicators() {
+        boolean isPro = licenseService != null && licenseService.isPro();
+        if (proHeaderBadge != null) {
+            proHeaderBadge.setVisible(isPro);
+            proHeaderBadge.setManaged(isPro);
+        }
+        if (tierBadgeLabel != null) {
+            if (isPro) {
+                tierBadgeLabel.setText("PRO");
+                tierBadgeLabel.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: #1e1b4b; -fx-font-weight: 800;");
+            } else {
+                tierBadgeLabel.setText("FREE");
+                tierBadgeLabel.setStyle("");
+            }
+        }
+        if (upgradeProSidebarBtn != null) {
+            upgradeProSidebarBtn.setVisible(!isPro);
+            upgradeProSidebarBtn.setManaged(!isPro);
+        }
     }
 
     private void setupLanguageSelector() {

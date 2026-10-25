@@ -19,6 +19,9 @@ cleanpilot:
   app:
     name: "CleanPilot"
     version: "1.0.0"
+  licensing:
+    lemon-squeezy-api-url: "https://api.lemonsqueezy.com/v1/licenses"
+    checkout-url: "https://cleanpilot.lemonsqueezy.com/checkout/buy/cleanpilot-pro"
   defaults:
     min-large-file-size-mb: 100
     theme: "DARK"

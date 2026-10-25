@@ -8,6 +8,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import org.springframework.stereotype.Component;
 
@@ -36,11 +38,25 @@ public class SettingsViewController implements Initializable {
     @FXML private ListView<String> excludedPathsListView;
     @FXML private Label statusLabel;
 
+    // Lemon Squeezy Licensing FXML
+    @FXML private Label licenseBadgeLabel;
+    @FXML private Label licenseTierTitleLabel;
+    @FXML private Label licenseStatusSubLabel;
+    @FXML private Button buyProBtn;
+    @FXML private VBox licenseActivationBox;
+    @FXML private TextField licenseKeyTextField;
+    @FXML private Button activateLicenseBtn;
+    @FXML private Label licenseMessageLabel;
+    @FXML private HBox licenseActiveInfoBox;
+    @FXML private Label licensedUserLabel;
+    @FXML private Label maskedKeyLabel;
+
     private final UserPreferencesService preferencesService;
     private final ThemeManager themeManager;
     private final com.cleanpilot.service.LocalizationService localizationService;
     private final com.cleanpilot.service.WindowsShellIntegrationService shellService;
     private final com.cleanpilot.service.ScheduledMaintenanceService maintenanceService;
+    private final com.cleanpilot.service.LicenseService licenseService;
     private final java.util.concurrent.ExecutorService executorService;
     private final ObservableList<String> excludedPaths = FXCollections.observableArrayList();
 
@@ -50,6 +66,7 @@ public class SettingsViewController implements Initializable {
             com.cleanpilot.service.LocalizationService localizationService,
             com.cleanpilot.service.WindowsShellIntegrationService shellService,
             com.cleanpilot.service.ScheduledMaintenanceService maintenanceService,
+            com.cleanpilot.service.LicenseService licenseService,
             java.util.concurrent.ExecutorService executorService
     ) {
         this.preferencesService = preferencesService;
@@ -57,6 +74,7 @@ public class SettingsViewController implements Initializable {
         this.localizationService = localizationService;
         this.shellService = shellService;
         this.maintenanceService = maintenanceService;
+        this.licenseService = licenseService;
         this.executorService = executorService;
     }
 
@@ -166,6 +184,113 @@ public class SettingsViewController implements Initializable {
         excludedPaths.setAll(savedExclusions);
         excludedPathsListView.setItems(excludedPaths);
         excludedPathsListView.setPlaceholder(new Label("No exclusion paths configured."));
+
+        // Lemon Squeezy Licensing State
+        updateLicenseUI();
+    }
+
+    private void updateLicenseUI() {
+        if (licenseBadgeLabel == null) return;
+
+        var details = licenseService.getLicenseDetails();
+        if (details != null && details.isPro()) {
+            licenseBadgeLabel.setText("PRO ACTIVE");
+            licenseBadgeLabel.setStyle("-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-weight: 800; -fx-padding: 4 10; -fx-background-radius: 4px;");
+            licenseTierTitleLabel.setText("CleanPilot Pro — Perpetual License");
+            licenseStatusSubLabel.setText("Full commercial features unlocked. Thank you for supporting honest, privacy-first software!");
+
+            if (buyProBtn != null) buyProBtn.setVisible(false);
+            if (licenseActivationBox != null) {
+                licenseActivationBox.setVisible(false);
+                licenseActivationBox.setManaged(false);
+            }
+            if (licenseActiveInfoBox != null) {
+                licenseActiveInfoBox.setVisible(true);
+                licenseActiveInfoBox.setManaged(true);
+            }
+            if (licensedUserLabel != null) {
+                String userDisplay = details.customerName();
+                if (details.customerEmail() != null && !details.customerEmail().isBlank()) {
+                    userDisplay += " (" + details.customerEmail() + ")";
+                }
+                licensedUserLabel.setText(userDisplay);
+            }
+            if (maskedKeyLabel != null) {
+                maskedKeyLabel.setText(details.formattedMaskedKey());
+            }
+        } else {
+            licenseBadgeLabel.setText("COMMUNITY");
+            licenseBadgeLabel.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: 800; -fx-padding: 4 10; -fx-background-radius: 4px;");
+            licenseTierTitleLabel.setText("CleanPilot Community Edition");
+            licenseStatusSubLabel.setText("Upgrade to CleanPilot Pro for automated maintenance, advanced threat heuristics, and priority support.");
+
+            if (buyProBtn != null) buyProBtn.setVisible(true);
+            if (licenseActivationBox != null) {
+                licenseActivationBox.setVisible(true);
+                licenseActivationBox.setManaged(true);
+            }
+            if (licenseActiveInfoBox != null) {
+                licenseActiveInfoBox.setVisible(false);
+                licenseActiveInfoBox.setManaged(false);
+            }
+        }
+    }
+
+    @FXML
+    public void onBuyPro() {
+        showStatus("Opening Lemon Squeezy CleanPilot Pro checkout page...");
+        licenseService.openPurchasePage();
+    }
+
+    @FXML
+    public void onActivateLicense() {
+        if (licenseKeyTextField == null) return;
+        String rawKey = licenseKeyTextField.getText();
+        if (rawKey == null || rawKey.trim().isEmpty()) {
+            showLicenseMessage("Please enter your Lemon Squeezy license key.", true);
+            return;
+        }
+
+        activateLicenseBtn.setDisable(true);
+        activateLicenseBtn.setText("Activating...");
+        showLicenseMessage("Contacting Lemon Squeezy activation servers...", false);
+
+        licenseService.activateLicense(rawKey.trim())
+                .thenAccept(result -> javafx.application.Platform.runLater(() -> {
+                    activateLicenseBtn.setDisable(false);
+                    activateLicenseBtn.setText("Activate License");
+                    if (result.success()) {
+                        showLicenseMessage(result.message(), false);
+                        updateLicenseUI();
+                        showStatus("CleanPilot Pro activated successfully!");
+                    } else {
+                        showLicenseMessage("Activation Error: " + result.message(), true);
+                    }
+                }));
+    }
+
+    @FXML
+    public void onDeactivateLicense() {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Deactivate CleanPilot Pro License");
+        confirm.setHeaderText("Deactivate License on This PC?");
+        confirm.setContentText("This will deactivate your license instance with Lemon Squeezy so you can transfer it to another computer.");
+
+        var choice = confirm.showAndWait();
+        if (choice.isPresent() && choice.get() == ButtonType.OK) {
+            licenseService.deactivateLicense().thenRun(() -> javafx.application.Platform.runLater(() -> {
+                updateLicenseUI();
+                showStatus("License deactivated. Reverted to Community edition.");
+            }));
+        }
+    }
+
+    private void showLicenseMessage(String msg, boolean isError) {
+        if (licenseMessageLabel != null) {
+            licenseMessageLabel.setText(msg);
+            licenseMessageLabel.setVisible(true);
+            licenseMessageLabel.setStyle(isError ? "-fx-text-fill: #ef4444; -fx-font-weight: 600;" : "-fx-text-fill: #10b981; -fx-font-weight: 600;");
+        }
     }
 
     @FXML

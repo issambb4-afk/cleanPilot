@@ -19,6 +19,39 @@
                 <Label text="%settings.subtitle" styleClass="text-subtle"/>
             </VBox>
 
+            <!-- CleanPilot Pro & Licensing Section (Lemon Squeezy) -->
+            <VBox spacing="14.0" styleClass="card" style="-fx-padding: 16 18; -fx-border-color: #3b82f6; -fx-border-width: 1px; -fx-border-radius: 8px;">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label fx:id="licenseBadgeLabel" text="COMMUNITY" styleClass="badge-info" style="-fx-font-weight: 800; -fx-padding: 4 10;"/>
+                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                        <Label fx:id="licenseTierTitleLabel" text="CleanPilot Community Edition" styleClass="title-4"/>
+                        <Label fx:id="licenseStatusSubLabel" text="Upgrade to CleanPilot Pro for automated maintenance, advanced threat heuristics, and priority support." styleClass="text-subtle" wrapText="true"/>
+                    </VBox>
+                    <Button fx:id="buyProBtn" text="⭐ Buy CleanPilot Pro" onAction="#onBuyPro" styleClass="accent" style="-fx-font-weight: 700; -fx-cursor: hand;"/>
+                </HBox>
+
+                <VBox fx:id="licenseActivationBox" spacing="8.0">
+                    <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <TextField fx:id="licenseKeyTextField" promptText="Enter your Lemon Squeezy License Key (e.g. 123e4567-e89b-12d3-a456-426614174000)" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="activateLicenseBtn" text="Activate License" onAction="#onActivateLicense" styleClass="button-outlined" style="-fx-font-weight: 600;"/>
+                    </HBox>
+                    <Label fx:id="licenseMessageLabel" text="" styleClass="text-small" visible="false"/>
+                </VBox>
+
+                <HBox fx:id="licenseActiveInfoBox" spacing="24.0" alignment="CENTER_LEFT" visible="false" managed="false">
+                    <VBox spacing="2.0">
+                        <Label text="LICENSED TO" styleClass="text-caption"/>
+                        <Label fx:id="licensedUserLabel" text="Customer Name" styleClass="text-bold"/>
+                    </VBox>
+                    <VBox spacing="2.0">
+                        <Label text="LICENSE KEY" styleClass="text-caption"/>
+                        <Label fx:id="maskedKeyLabel" text="XXXX-XXXX-****-1234" styleClass="text-bold"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Deactivate on this PC" onAction="#onDeactivateLicense" styleClass="button-outlined, danger"/>
+                </HBox>
+            </VBox>
+
             <!-- Language Section -->
             <VBox spacing="10.0" styleClass="card" style="-fx-padding: 14 16;">
                 <Label text="%settings.language.title" styleClass="title-4"/>
